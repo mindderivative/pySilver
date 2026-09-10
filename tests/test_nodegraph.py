@@ -16,8 +16,8 @@ from pysilver.spec import WidgetKind, parse_view
 from pysilver.spec.models import EdgeSpec
 from pysilver.tree.reconcile import reconcile
 from pysilver.widgets import build_element
-from pysilver.widgets.base import _REGISTRY
 from pysilver.widgets.nodegraph import NodeElement
+from pysilver.widgets.registry import _REGISTRY
 
 LOOSE = Constraints.loose(Size(1000.0, 800.0))
 

@@ -30,8 +30,8 @@ from pysilver.text.editing import insert
 from pysilver.theme import Palette, Theme
 from pysilver.tree.element import PaintContext
 from pysilver.widgets import build_element
-from pysilver.widgets.base import _REGISTRY
 from pysilver.widgets.codeeditor import CodeEditorElement
+from pysilver.widgets.registry import _REGISTRY
 
 CTRL = frozenset({"Control"})
 SHIFT = frozenset({"Shift"})

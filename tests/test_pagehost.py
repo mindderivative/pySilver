@@ -18,7 +18,7 @@ import pytest
 
 from pysilver import App, Signal, Theme
 from pysilver.spec import WidgetKind, parse_view
-from pysilver.widgets.base import _REGISTRY, create_element
+from pysilver.widgets.registry import _REGISTRY, create_element
 
 try:
     from pysilver.widgets.terminal import _BITTTY_AVAILABLE, _PTY_AVAILABLE

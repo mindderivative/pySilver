@@ -9,8 +9,6 @@ from .base import (
     StackElement,
     TextElement,
     VerticalElement,
-    build_element,
-    create_element,
 )
 from .carousel import CarouselElement, CarouselItemElement
 from .material import (
@@ -45,6 +43,7 @@ from .overlays import (
     SnackbarElement,
     TooltipElement,
 )
+from .registry import build_element, create_element
 from .scroll import ScrollViewElement
 from .textfield import TextFieldElement
 

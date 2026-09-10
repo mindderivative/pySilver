@@ -89,7 +89,7 @@ def test_kind_builds(kind: str) -> None:
 
 
 def test_every_kind_is_registered() -> None:
-    from pysilver.widgets.base import _REGISTRY, create_element
+    from pysilver.widgets.registry import _REGISTRY, create_element
 
     create_element(parse_view({"name": "x", "widget": "Tabs"}).root)
     assert set(_REGISTRY) == set(WidgetKind)

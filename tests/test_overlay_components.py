@@ -98,7 +98,7 @@ def test_each_overlay_kind_parses_and_builds(kind: str) -> None:
 
 def test_every_widget_kind_is_registered() -> None:
     """The catalogue and the registry must not drift apart."""
-    from pysilver.widgets.base import _REGISTRY, create_element
+    from pysilver.widgets.registry import _REGISTRY, create_element
 
     create_element(parse_view({"name": "x", "widget": "Dialog"}).root)  # force lazy load
     assert set(_REGISTRY) == set(WidgetKind)

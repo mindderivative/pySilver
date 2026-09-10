@@ -21,7 +21,7 @@ from pysilver.spec import WidgetKind, parse_view
 from pysilver.theme import Palette, Theme
 from pysilver.tree.element import PaintContext
 from pysilver.widgets import build_element
-from pysilver.widgets.base import _REGISTRY, create_element
+from pysilver.widgets.registry import _REGISTRY, create_element
 from pysilver.widgets.search import SearchBarElement
 
 CTRL = frozenset({"Control"})

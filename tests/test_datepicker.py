@@ -20,8 +20,8 @@ from pysilver.runtime.events import EventType, PointerEvent
 from pysilver.spec import WidgetKind, parse_view
 from pysilver.theme import Palette
 from pysilver.tree.element import PaintContext
-from pysilver.widgets.base import _REGISTRY, create_element
 from pysilver.widgets.datepicker import DatePickerElement
+from pysilver.widgets.registry import _REGISTRY, create_element
 
 
 def _app(*, calls: list[str] | None = None, **spec):

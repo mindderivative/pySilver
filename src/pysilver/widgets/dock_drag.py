@@ -154,7 +154,7 @@ def find_drop_target(source: Any, x: float, y: float) -> tuple[Any, Zone] | None
 
 
 def _build_ghost(label: str) -> Any:
-    from .base import build_element
+    from .registry import build_element
 
     width, height = _GHOST_SIZE
     spec = WidgetSpec(
@@ -347,8 +347,8 @@ def _drop_as_tab(
 def _drop_as_split(
     source: DockGroupElement, panel: DockPanelElement, target: Any, zone: Zone
 ) -> None:
-    from .base import build_element
     from .dock import DockGroupElement as _Group
+    from .registry import build_element
 
     parent = target.parent
     if parent is None:

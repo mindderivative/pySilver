@@ -31,7 +31,7 @@ from pysilver.runtime.events import (
 )
 from pysilver.spec import WidgetKind, parse_view
 from pysilver.widgets import build_element
-from pysilver.widgets.base import _REGISTRY
+from pysilver.widgets.registry import _REGISTRY
 from pysilver.widgets.terminal import (
     _BITTTY_AVAILABLE,
     _PTY_AVAILABLE,

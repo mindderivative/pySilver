@@ -25,7 +25,7 @@ from ..layout import (
     Stack,
 )
 from ..paint import NO_TOKEN
-from ..spec import StyleSpec, WidgetKind, WidgetSpec
+from ..spec import StyleSpec, WidgetSpec
 from ..spec.typescale import TYPE_SCALE, TypeStyle
 from ..text import TextEngine
 from ..text.fontdb import FontRequest
@@ -43,9 +43,7 @@ __all__ = [
     "StackElement",
     "TextElement",
     "VerticalElement",
-    "build_element",
     "content_token",
-    "create_element",
     "measure_text",
     "paint_text",
     "paired_content_token",
@@ -472,8 +470,6 @@ class ButtonElement(ContainerElement):
         siblings along it. No new cross-element coupling: an ordinary Flex
         row already reflows whenever any child's own size changes.
         """
-        from .material import SELECTION_CURVE, SELECTION_MOTION  # local: avoids a cycle
-
         target = 1.0 if self._group_standard and (self.checked or self.state.pressed) else 0.0
         return self.animated(
             "group_select",
@@ -548,8 +544,6 @@ class ButtonElement(ContainerElement):
         token = content_token(ctx, style, content)
 
         if elevated:
-            from .material import elevation_shadow
-
             # "Button (elevated)" is a level-1 resting component. The shadow
             # comes from the level, not from a number chosen here.
             elevation_shadow(
@@ -598,8 +592,6 @@ class ButtonElement(ContainerElement):
         # every other component rather than reimplemented here -- Button had
         # its own copy, which is why it alone did not cross-fade when state
         # layers were animated.
-        from .material import _emit_state_layer
-
         _emit_state_layer(ctx, self, absolute, token, radii)
 
         if self._text.strip():
@@ -854,7 +846,6 @@ class TextElement(_StyledMixin, Padding):
         over the text would tint the letters it is meant to be behind.
         """
         from ..text.selection import rects_for
-        from .material import _box
 
         start, end = self.selection
         if start == end:
@@ -949,115 +940,18 @@ class SpacerElement(_StyledMixin, Padding):
         return outer.constrain(outer.smallest)
 
 
-def _material_registry() -> dict[WidgetKind, type]:
-    """Imported lazily: material.py imports helpers from this module."""
-    from . import buttongroup as bg
-    from . import canvas as cv
-    from . import carousel as ca
-    from . import codeeditor as ce
-    from . import datepicker as dp
-    from . import dock as dk
-    from . import image as im
-    from . import material as m
-    from . import navigation as n
-    from . import nodegraph as ng
-    from . import overlays as o
-    from . import pagehost as ph
-    from . import scroll as sc
-    from . import search as se
-    from . import slider as sl
-    from . import splitbutton as sb
-    from . import terminal as tm
-    from . import textfield as tf
-    from . import timepicker as tp
-    from . import video as vd
-
-    return {
-        WidgetKind.CARD: m.CardElement,
-        WidgetKind.DIVIDER: m.DividerElement,
-        WidgetKind.SHAPE: m.ShapeElement,
-        WidgetKind.CHECKBOX: m.CheckboxElement,
-        WidgetKind.RADIO: m.RadioElement,
-        WidgetKind.SWITCH: m.SwitchElement,
-        WidgetKind.CHIP: m.ChipElement,
-        WidgetKind.ICON_BUTTON: m.IconButtonElement,
-        WidgetKind.FAB: m.FabElement,
-        WidgetKind.BADGE: m.BadgeElement,
-        WidgetKind.SPIN_BOX: m.SpinBoxElement,
-        WidgetKind.SLIDER: sl.SliderElement,
-        WidgetKind.PAGINATION: m.PaginationElement,
-        WidgetKind.ACCORDION: m.AccordionElement,
-        WidgetKind.NAVIGATION_RAIL: n.NavigationRailElement,
-        WidgetKind.NAV_ITEM: n.NavItemElement,
-        WidgetKind.TOP_APP_BAR: n.TopAppBarElement,
-        WidgetKind.STATUS_BAR: n.StatusBarElement,
-        WidgetKind.DOCK_SPLIT: dk.DockSplitElement,
-        WidgetKind.DOCK_GROUP: dk.DockGroupElement,
-        WidgetKind.DOCK_PANEL: dk.DockPanelElement,
-        WidgetKind.TABS: n.TabsElement,
-        WidgetKind.TAB: n.TabElement,
-        WidgetKind.SEGMENTED_BUTTON: n.SegmentedButtonElement,
-        WidgetKind.SEGMENT: n.SegmentElement,
-        WidgetKind.LIST_ITEM: n.ListItemElement,
-        WidgetKind.TREE_VIEW: n.TreeViewElement,
-        WidgetKind.TREE_ITEM: n.TreeItemElement,
-        WidgetKind.LINEAR_PROGRESS: n.LinearProgressElement,
-        WidgetKind.CIRCULAR_PROGRESS: n.CircularProgressElement,
-        WidgetKind.DIALOG: o.DialogElement,
-        WidgetKind.POPOVER: o.PopoverElement,
-        WidgetKind.MENU: o.MenuElement,
-        WidgetKind.MENU_ITEM: o.MenuItemElement,
-        WidgetKind.TOOLTIP: o.TooltipElement,
-        WidgetKind.SNACKBAR: o.SnackbarElement,
-        WidgetKind.BOTTOM_SHEET: o.BottomSheetElement,
-        WidgetKind.SIDE_SHEET: o.SideSheetElement,
-        WidgetKind.SCROLL_VIEW: sc.ScrollViewElement,
-        WidgetKind.CAROUSEL: ca.CarouselElement,
-        WidgetKind.CAROUSEL_ITEM: ca.CarouselItemElement,
-        WidgetKind.TEXT_FIELD: tf.TextFieldElement,
-        WidgetKind.CANVAS: cv.CanvasElement,
-        WidgetKind.IMAGE: im.ImageElement,
-        WidgetKind.VIDEO: vd.VideoElement,
-        WidgetKind.NODE_GRAPH: ng.NodeGraphElement,
-        WidgetKind.NODE: ng.NodeElement,
-        WidgetKind.CODE_EDITOR: ce.CodeEditorElement,
-        WidgetKind.TERMINAL: tm.TerminalElement,
-        WidgetKind.PAGE_HOST: ph.PageHostElement,
-        WidgetKind.SEARCH_BAR: se.SearchBarElement,
-        WidgetKind.SPLIT_BUTTON: sb.SplitButtonElement,
-        WidgetKind.DATE_PICKER: dp.DatePickerElement,
-        WidgetKind.TIME_PICKER: tp.TimePickerElement,
-        WidgetKind.BUTTON_GROUP: bg.ButtonGroupElement,
-    }
-
-
-_REGISTRY: dict[WidgetKind, type] = {
-    WidgetKind.CONTAINER: ContainerElement,
-    WidgetKind.HORIZONTAL: HorizontalElement,
-    WidgetKind.VERTICAL: VerticalElement,
-    WidgetKind.STACK: StackElement,
-    WidgetKind.BUTTON: ButtonElement,
-    WidgetKind.LINK: LinkElement,
-    WidgetKind.TEXT: TextElement,
-    WidgetKind.SPACER: SpacerElement,
-    WidgetKind.ICON: IconElement,
-}
-
-_REGISTRY_COMPLETE = False
-
-
-def create_element(spec: WidgetSpec) -> Any:
-    """Construct the element for one spec node (no children)."""
-    global _REGISTRY_COMPLETE
-    if not _REGISTRY_COMPLETE:
-        _REGISTRY.update(_material_registry())
-        _REGISTRY_COMPLETE = True
-    return _REGISTRY[spec.widget](spec)
-
-
-def build_element(spec: WidgetSpec) -> Any:
-    """Construct a whole element subtree from a spec subtree."""
-    element = create_element(spec)
-    for child_spec in spec.children:
-        element.add_child(build_element(child_spec))
-    return element
+# Placed here, after every name material.py needs from this module
+# (_StyledMixin, content_token, measure_text, paint_text) is already defined,
+# rather than at the top of the file -- material.py imports those at its own
+# module level, so this import at the TOP of base.py, before they exist,
+# would find base.py only half-initialized and fail. This is the one place
+# ButtonElement/TextElement's own shared paint helpers come from; previously
+# four separate local imports, one per call site, working around the same
+# constraint less legibly.
+from .material import (  # noqa: E402
+    SELECTION_CURVE,
+    SELECTION_MOTION,
+    _box,
+    _emit_state_layer,
+    elevation_shadow,
+)

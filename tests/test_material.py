@@ -50,7 +50,7 @@ def tokens_in(dl: DisplayList) -> set[int]:
 
 
 def test_every_kind_has_an_element() -> None:
-    from pysilver.widgets.base import _REGISTRY, create_element
+    from pysilver.widgets.registry import _REGISTRY, create_element
 
     create_element(parse_view({"name": "x", "widget": "Card"}).root)  # force lazy load
     assert set(_REGISTRY) == set(WidgetKind)

@@ -20,8 +20,8 @@ from pysilver.paint import DisplayList
 from pysilver.spec import WidgetKind, parse_view
 from pysilver.theme import Palette
 from pysilver.tree.element import PaintContext
-from pysilver.widgets.base import _REGISTRY, create_element
 from pysilver.widgets.buttongroup import ButtonGroupElement
+from pysilver.widgets.registry import _REGISTRY, create_element
 
 
 def _app(variant: str, count: int = 3, size: str | None = None):
