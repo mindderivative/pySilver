@@ -17,8 +17,10 @@ class TimePickerDemo(ViewModel):
     def __init__(self) -> None:
         self.selected = Signal("09:30", name="selected")
 
-        self.view_source = (Path(__file__).parent / "TimePicker_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "TimePicker_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def change_time(self, event: Any) -> None:
         self.selected.set(event.value)

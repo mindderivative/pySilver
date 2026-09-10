@@ -57,8 +57,10 @@ class ButtonGroupDemo(ViewModel):
         self.ladder_xl_share = Signal(False, name="ladder_xl_share")
         self.ladder_xl_delete = Signal(False, name="ladder_xl_delete")
 
-        self.view_source = (Path(__file__).parent / "ButtonGroup_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "ButtonGroup_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def toggle_bold(self, event: Any) -> None:
         self.bold.update(lambda v: not v)

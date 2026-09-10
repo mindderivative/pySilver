@@ -17,8 +17,10 @@ class DockGroupDemo(ViewModel):
     def __init__(self) -> None:
         self.active = Signal("files", name="active")
 
-        self.view_source = (Path(__file__).parent / "DockGroup_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "DockGroup_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def select_panel(self, event: Any) -> None:
         self.active.set(event.value)

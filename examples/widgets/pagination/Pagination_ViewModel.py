@@ -17,8 +17,10 @@ class PaginationDemo(ViewModel):
     def __init__(self) -> None:
         self.page = Signal("1", name="page")
 
-        self.view_source = (Path(__file__).parent / "Pagination_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Pagination_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def change_page(self, event: Any) -> None:
         self.page.set(event.value)

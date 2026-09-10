@@ -17,8 +17,8 @@ class BadgeDemo(ViewModel):
     def __init__(self) -> None:
         self.unread = Signal(3, name="unread")
 
-        self.view_source = (Path(__file__).parent / "Badge_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Badge_View.yaml").read_text(encoding="utf-8")
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def increment(self, event: Any) -> None:
         self.unread.update(lambda n: n + 1)

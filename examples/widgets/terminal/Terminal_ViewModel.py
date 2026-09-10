@@ -14,5 +14,7 @@ class TerminalDemo(ViewModel):
     """State for `Terminal_View.yaml`. No commands -- the shell owns its own input."""
 
     def __init__(self) -> None:
-        self.view_source = (Path(__file__).parent / "Terminal_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Terminal_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")

@@ -17,8 +17,8 @@ class SpinBoxDemo(ViewModel):
     def __init__(self) -> None:
         self.qty = Signal("3", name="qty")
 
-        self.view_source = (Path(__file__).parent / "SpinBox_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "SpinBox_View.yaml").read_text(encoding="utf-8")
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def change_qty(self, event: Any) -> None:
         self.qty.set(event.value)

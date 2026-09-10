@@ -18,8 +18,8 @@ class DialogDemo(ViewModel):
         self.dialog_open = Signal(False, name="dialog_open")
         self.deleted = Signal(0, name="deleted")
 
-        self.view_source = (Path(__file__).parent / "Dialog_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Dialog_View.yaml").read_text(encoding="utf-8")
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def open_dialog(self, event: Any) -> None:
         self.dialog_open.set(True)

@@ -22,8 +22,10 @@ class TreeItemDemo(ViewModel):
         #: widget exists for.
         self.src_expanded = Signal(True, name="src_expanded")
 
-        self.view_source = (Path(__file__).parent / "TreeItem_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "TreeItem_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def select(self, event: Any) -> None:
         self.selected.set(event.target.name)

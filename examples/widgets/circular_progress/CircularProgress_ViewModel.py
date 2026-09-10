@@ -19,8 +19,10 @@ class CircularProgressDemo(ViewModel):
         self.progress = Signal(0.3, name="progress")
         self.percent = Signal(30, name="percent")
 
-        self.view_source = (Path(__file__).parent / "CircularProgress_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "CircularProgress_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def _step(self, delta: float) -> None:
         value = max(0.0, min(1.0, self.progress.peek() + delta))

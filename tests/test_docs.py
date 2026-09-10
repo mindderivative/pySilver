@@ -18,8 +18,8 @@ from pysilver.spec import WidgetKind
 from pysilver.spec.models import StyleSpec, WidgetSpec
 
 ROOT = Path(__file__).resolve().parents[1]
-REFERENCE = (ROOT / "docs/view-reference.md").read_text()
-README = (ROOT / "README.md").read_text()
+REFERENCE = (ROOT / "docs/view-reference.md").read_text(encoding="utf-8")
+README = (ROOT / "README.md").read_text(encoding="utf-8")
 
 
 @pytest.mark.parametrize("kind", sorted(k.value for k in WidgetKind))

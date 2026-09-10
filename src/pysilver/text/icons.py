@@ -41,7 +41,7 @@ class IconStyle:
 
 @lru_cache(maxsize=1)
 def _load_names() -> dict[str, int]:
-    return {k: int(v) for k, v in json.loads(ICON_NAMES.read_text()).items()}
+    return {k: int(v) for k, v in json.loads(ICON_NAMES.read_text(encoding="utf-8")).items()}
 
 
 class IconSet:

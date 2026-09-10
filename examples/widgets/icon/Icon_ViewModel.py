@@ -18,5 +18,5 @@ class IconDemo(ViewModel):
     """State for `Icon_View.yaml`. No commands -- nothing here is interactive."""
 
     def __init__(self) -> None:
-        self.view_source = (Path(__file__).parent / "Icon_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Icon_View.yaml").read_text(encoding="utf-8")
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")

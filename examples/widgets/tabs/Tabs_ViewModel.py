@@ -26,8 +26,8 @@ class TabsDemo(ViewModel):
         #: tracks a signal the same way `text:`/`icon:` already do.
         self.inbox_count = Signal("3", name="inbox_count")
 
-        self.view_source = (Path(__file__).parent / "Tabs_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Tabs_View.yaml").read_text(encoding="utf-8")
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def select_tab(self, event: Any) -> None:
         self.tab.set(event.target.name)

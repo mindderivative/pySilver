@@ -17,8 +17,8 @@ class NavItemDemo(ViewModel):
     def __init__(self) -> None:
         self.selected = Signal("home", name="selected")
 
-        self.view_source = (Path(__file__).parent / "NavItem_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "NavItem_View.yaml").read_text(encoding="utf-8")
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def select(self, event: Any) -> None:
         self.selected.set(event.target.name)

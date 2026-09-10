@@ -17,8 +17,10 @@ class AccordionDemo(ViewModel):
     def __init__(self) -> None:
         self.open = Signal(True, name="open")
 
-        self.view_source = (Path(__file__).parent / "Accordion_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Accordion_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def toggle(self, event: Any) -> None:
         self.open.update(lambda on: not on)

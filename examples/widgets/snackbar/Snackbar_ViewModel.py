@@ -19,8 +19,10 @@ class SnackbarDemo(ViewModel):
         self.message = Signal("", name="message")
         self.action = Signal("", name="action")
 
-        self.view_source = (Path(__file__).parent / "Snackbar_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Snackbar_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def archive(self, event: Any) -> None:
         """Actionable -- never auto-dismisses, per M3's own rule."""

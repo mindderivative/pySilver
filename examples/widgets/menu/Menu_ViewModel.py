@@ -19,8 +19,8 @@ class MenuDemo(ViewModel):
         self.menu_open = Signal(False, name="menu_open")
         self.last_action = Signal("none yet", name="last_action")
 
-        self.view_source = (Path(__file__).parent / "Menu_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Menu_View.yaml").read_text(encoding="utf-8")
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def open_menu(self, event: Any) -> None:
         self.menu_open.set(True)

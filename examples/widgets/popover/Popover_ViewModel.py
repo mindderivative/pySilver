@@ -17,8 +17,8 @@ class PopoverDemo(ViewModel):
     def __init__(self) -> None:
         self.pop_open = Signal(False, name="pop_open")
 
-        self.view_source = (Path(__file__).parent / "Popover_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Popover_View.yaml").read_text(encoding="utf-8")
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def open_popover(self, event: Any) -> None:
         self.pop_open.set(True)

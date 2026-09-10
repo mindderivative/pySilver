@@ -19,8 +19,10 @@ class SegmentedButtonDemo(ViewModel):
         self.view = Signal("week", name="view")
         self.days = Signal("tue,thu", name="days")
 
-        self.view_source = (Path(__file__).parent / "SegmentedButton_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "SegmentedButton_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def select_view(self, event: Any) -> None:
         self.view.set(event.target.name)

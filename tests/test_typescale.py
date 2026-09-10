@@ -218,7 +218,7 @@ def test_the_example_documents_its_provenance() -> None:
     """`examples/typescale.yaml` is now an override sample, but it must keep
     saying where the built-in figures came from."""
     path = Path(__file__).resolve().parents[1] / "examples/typescale.yaml"
-    text = path.read_text()
+    text = path.read_text(encoding="utf-8")
     assert "material-web" in text
     assert "34.0.21" in text
 

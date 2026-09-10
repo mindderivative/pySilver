@@ -19,8 +19,8 @@ class ButtonDemo(ViewModel):
 
         # Read live from disk, not hand-copied, so the two code panels can
         # never drift from what is actually running.
-        self.view_source = (Path(__file__).parent / "Button_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Button_View.yaml").read_text(encoding="utf-8")
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def press(self, event: Any) -> None:
         self.clicks.update(lambda n: n + 1)

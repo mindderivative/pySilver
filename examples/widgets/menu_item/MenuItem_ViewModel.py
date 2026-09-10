@@ -23,8 +23,10 @@ class MenuItemDemo(ViewModel):
         self.panels_open = Signal(False, name="panels_open")
         self.last_clicked = Signal("none yet", name="last_clicked")
 
-        self.view_source = (Path(__file__).parent / "MenuItem_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "MenuItem_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def toggle_menu(self, event: Any) -> None:
         """A menu-bar button: opens its own menu, or closes it if already

@@ -14,5 +14,5 @@ class LinkDemo(ViewModel):
     """State for `Link_View.yaml`. No commands -- this demo has no interaction."""
 
     def __init__(self) -> None:
-        self.view_source = (Path(__file__).parent / "Link_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Link_View.yaml").read_text(encoding="utf-8")
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")

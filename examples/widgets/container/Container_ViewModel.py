@@ -51,8 +51,10 @@ class ContainerDemo(ViewModel):
         self._padding_index = 0
         self._corner_index = 0
 
-        self.view_source = (Path(__file__).parent / "Container_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Container_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def _view(self) -> dict[str, Any]:
         padding = _PADDING_STEPS[self._padding_index]

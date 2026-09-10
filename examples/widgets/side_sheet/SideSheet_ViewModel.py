@@ -17,8 +17,10 @@ class SideSheetDemo(ViewModel):
     def __init__(self) -> None:
         self.sheet_open = Signal(False, name="sheet_open")
 
-        self.view_source = (Path(__file__).parent / "SideSheet_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "SideSheet_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def open_sheet(self, event: Any) -> None:
         self.sheet_open.set(True)

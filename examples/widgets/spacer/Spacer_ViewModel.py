@@ -49,8 +49,8 @@ class SpacerDemo(ViewModel):
     def __init__(self) -> None:
         self._ratio_index = 0
 
-        self.view_source = (Path(__file__).parent / "Spacer_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Spacer_View.yaml").read_text(encoding="utf-8")
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def _view(self) -> dict[str, Any]:
         weight_a, weight_b = _RATIOS[self._ratio_index]

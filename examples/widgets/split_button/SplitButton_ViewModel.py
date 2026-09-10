@@ -19,8 +19,10 @@ class SplitButtonDemo(ViewModel):
         self.saves = Signal(0, name="saves")
         self.menu_open = Signal(False, name="menu_open")
 
-        self.view_source = (Path(__file__).parent / "SplitButton_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "SplitButton_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def save(self, event: Any) -> None:
         self.saves.update(lambda n: n + 1)

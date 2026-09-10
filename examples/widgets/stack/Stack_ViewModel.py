@@ -49,8 +49,8 @@ class StackDemo(ViewModel):
     def __init__(self) -> None:
         self._corner_index = 0
 
-        self.view_source = (Path(__file__).parent / "Stack_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Stack_View.yaml").read_text(encoding="utf-8")
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def _view(self) -> dict[str, Any]:
         align_x, align_y = _CORNERS[self._corner_index]

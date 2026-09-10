@@ -76,7 +76,7 @@ def test_watcher_runs_on_a_background_thread(view) -> None:
 def test_detects_a_real_edit(view) -> None:
     with HotReloader([view]) as r:
         time.sleep(0.3)
-        view.write_text(view.read_text() + "\n# touched\n")
+        view.write_text(view.read_text(encoding="utf-8") + "\n# touched\n")
         assert wait_for(lambda: r.pending > 0), "no change detected"
         events = r.drain()
         assert events and events[0].path == view.resolve()

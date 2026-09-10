@@ -14,5 +14,7 @@ class CodeEditorDemo(ViewModel):
     """State for `CodeEditor_View.yaml`. No commands -- editing is handled internally."""
 
     def __init__(self) -> None:
-        self.view_source = (Path(__file__).parent / "CodeEditor_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "CodeEditor_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")

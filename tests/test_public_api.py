@@ -92,7 +92,7 @@ def test_the_declared_version_matches_the_packaging_metadata() -> None:
     from pathlib import Path
 
     pyproject = Path(__file__).resolve().parents[1] / "pyproject.toml"
-    declared = tomllib.loads(pyproject.read_text())["project"]["version"]
+    declared = tomllib.loads(pyproject.read_text(encoding="utf-8"))["project"]["version"]
     assert declared == pysilver.__version__
 
 

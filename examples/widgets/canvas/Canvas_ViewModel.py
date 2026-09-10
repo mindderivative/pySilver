@@ -16,8 +16,8 @@ class CanvasDemo(ViewModel):
     """State and commands for `Canvas_View.yaml`."""
 
     def __init__(self) -> None:
-        self.view_source = (Path(__file__).parent / "Canvas_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Canvas_View.yaml").read_text(encoding="utf-8")
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def draw(self, canvas: Any) -> None:
         """`on_paint` is called with one argument, a `CanvasContext` -- no

@@ -17,8 +17,8 @@ class SwitchDemo(ViewModel):
     def __init__(self) -> None:
         self.on = Signal(False, name="on")
 
-        self.view_source = (Path(__file__).parent / "Switch_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Switch_View.yaml").read_text(encoding="utf-8")
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def toggle(self, event: Any) -> None:
         self.on.update(lambda v: not v)

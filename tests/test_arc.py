@@ -59,7 +59,7 @@ def test_every_kind_matches_the_shader_constant() -> None:
     Nothing else ties the two together, so a renumbered enum would silently
     draw every box as a glyph rather than fail.
     """
-    source = SHADER.read_text()
+    source = SHADER.read_text(encoding="utf-8")
     declared = {
         name.removeprefix("KIND_"): int(value)
         for name, value in re.findall(r"const (KIND_\w+)\s*:\s*u32\s*=\s*(\d+)u", source)

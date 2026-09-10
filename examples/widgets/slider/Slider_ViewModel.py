@@ -30,8 +30,8 @@ class SliderDemo(ViewModel):
         self.shape_hexagon = Signal(40, name="shape_hexagon")
         self.shape_image = Signal(40, name="shape_image")
 
-        self.view_source = (Path(__file__).parent / "Slider_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "Slider_View.yaml").read_text(encoding="utf-8")
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def change_volume_xs(self, event: Any) -> None:
         self.volume_xs.set(event.value)

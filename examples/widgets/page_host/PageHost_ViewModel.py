@@ -17,8 +17,10 @@ class PageHostDemo(ViewModel):
     def __init__(self) -> None:
         self.page = Signal("home", name="page")
 
-        self.view_source = (Path(__file__).parent / "PageHost_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "PageHost_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def go_home(self, event: Any) -> None:
         self.page.set("home")
