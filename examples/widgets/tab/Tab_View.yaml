@@ -1,0 +1,79 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Tab"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "One destination inside a Tabs bar: a label, and the active indicator painted by the parent."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          A Tab is a plain label -- the 3dp active indicator is drawn by
+          the `Tabs` container, not by the Tab itself, since the
+          indicator slides between tabs rather than belonging to any one
+          of them. `handlers: {on_click: ...}` on each Tab is what writes
+          the clicked tab's own name back into the container's `value:`.
+          A Tab only makes sense inside a `Tabs` bar, so this demo hosts
+          three of them minimally; Tab's own anatomy is the focus here,
+          not the bar (which has its own demo).
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Vertical
+        style: {spacing: 8, width: expand}
+        children:
+          - name: tabs
+            widget: Tabs
+            value: "{{ selected.get() }}"
+            style: {width: expand}
+            children:
+              - {name: video, widget: Tab, text: "Video", handlers: {on_click: select}}
+              - {name: photos, widget: Tab, text: "Photos", handlers: {on_click: select}}
+              - {name: audio, widget: Tab, text: "Audio", handlers: {on_click: select}}
+          - widget: Text
+            text: "Selected: {{ selected.get() }}"
+            style: {color: on_surface_variant}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

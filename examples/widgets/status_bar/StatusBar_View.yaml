@@ -1,0 +1,79 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Status Bar"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "Not an M3 component: a thin, informational bar docked to a window edge -- word count, encoding, a branch, connection state."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          Checked directly rather than assumed absent: M3 has neither
+          this widget nor the phrase "status bar" anywhere in its own
+          vocabulary. Its nearest cousin, the docked toolbar, is a
+          different thing -- a row of action buttons, not an
+          informational strip -- so this doesn't borrow that anatomy
+          despite sitting at the same edge. Built the way `TopAppBar` is:
+          a plain `Flex` a view populates with whatever `Text`/`Icon`/
+          `Divider` children it wants, with a `Spacer` doing the
+          leading/trailing split the same way it would in any other
+          `Horizontal`.
+
+          Use cases: a persistent, low-emphasis strip of live state at
+          the edge of a window -- an editor's line/column position, a
+          sync indicator, a connection status -- the way a code editor
+          or IDE typically has one at the bottom.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: StatusBar
+        style: {width: expand, height: 28, background: surface_container_low, padding: {left: 12, right: 12}}
+        children:
+          - {widget: Icon, icon: check_circle, style: {icon_size: 14, color: on_surface_variant}}
+          - {widget: Text, text: " main   Ln 12, Col 4", style: {font_size: 12, color: on_surface_variant}}
+          - {widget: Spacer}
+          - {widget: Text, text: "UTF-8", style: {font_size: 12, color: on_surface_variant}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

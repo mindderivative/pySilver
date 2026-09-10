@@ -1,0 +1,74 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Carousel Item"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "One item inside a Carousel: a 28dp-rounded surface with an optional label, sized entirely by its parent."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          An item doesn't choose its own width -- the Carousel resizes
+          it as the strip scrolls, which is the point of the component.
+          `text:` is drawn over the bottom of the surface, where M3 puts
+          an item's label. Its content parallaxes: M3 states "carousel
+          items move at a different speed than their content", so the
+          content is laid out wider than the item and panned within it
+          as a function of where the item sits in the strip. A
+          CarouselItem only makes sense inside a `Carousel`, so this demo
+          hosts several minimally; the item's own anatomy is the focus
+          here, not the strip (which has its own demo).
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example -- drag to scroll"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Carousel
+        style: {variant: multi_browse, height: 140, width: expand}
+        children:
+          - {name: c0, widget: CarouselItem, text: "Alpha"}
+          - {name: c1, widget: CarouselItem, text: "Bravo"}
+          - {name: c2, widget: CarouselItem, text: "Charlie"}
+          - {name: c3, widget: CarouselItem, text: "Delta"}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

@@ -1,0 +1,84 @@
+root:
+  name: root
+  widget: ScrollView
+  style: {width: expand, height: expand}
+  children:
+    - widget: Vertical
+      style:
+        background: surface
+        padding: 32
+        spacing: 20
+        width: expand
+        cross_alignment: stretch
+      children:
+        - name: title
+          widget: Text
+          text: "Bottom Sheet"
+          style: {text_style: headline-small, color: on_surface}
+
+        - name: summary
+          widget: Text
+          text: "M3's bottom sheet: supplementary content sliding up from the bottom edge, full width to a 640dp max."
+          style: {text_style: body-large, color: on_surface_variant}
+
+        - {name: div1, widget: Divider, style: {width: expand}}
+
+        - name: explanation
+          widget: Text
+          text: |
+            `surface_container_low`, a 640dp max width, 28dp top corners
+            only -- flush with the bottom edge, so only the top needs
+            rounding. An optional 32x4dp drag handle (22dp padding above
+            and below) is genuinely draggable: drag it down far enough and
+            the sheet dismisses itself.
+
+            Use cases, from the spec: bottom sheets display supplementary
+            content and actions on a mobile screen -- a versatile component
+            that can contain a wide variety of information and layouts.
+          style: {text_style: body-medium, color: on_surface_variant}
+
+        - {name: div2, widget: Divider, style: {width: expand}}
+
+        - name: live_heading
+          widget: Text
+          text: "Live example -- drag the handle down to dismiss"
+          style: {text_style: title-medium, color: primary}
+
+        - name: live_demo
+          widget: Horizontal
+          style: {spacing: 16}
+          children:
+            - {name: trigger, widget: Button, text: "Share", style: {variant: filled_tonal}, handlers: {on_click: open_sheet}}
+
+        - {name: div3, widget: Divider, style: {width: expand}}
+
+        - name: code_heading
+          widget: Text
+          text: "Source"
+          style: {text_style: title-medium, color: primary}
+
+        - name: code_panels
+          widget: Horizontal
+          style: {spacing: 16, width: expand, height: 260}
+          children:
+            - name: yaml_source
+              widget: CodeEditor
+              value: "{{ view_source }}"
+              style: {width: expand, height: expand, language: yaml, read_only: true}
+            - name: python_source
+              widget: CodeEditor
+              value: "{{ viewmodel_source }}"
+              style: {width: expand, height: expand, language: python, read_only: true}
+
+overlays:
+  - name: sheet
+    widget: BottomSheet
+    open: "{{ sheet_open.get() }}"
+    style: {handle: true}
+    handlers: {on_dismiss: close_sheet}
+    children:
+      - widget: Vertical
+        style: {padding: 24, spacing: 12}
+        children:
+          - {widget: Text, text: "Share to", style: {text_style: title-medium, color: on_surface}}
+          - {widget: Text, text: "Mail, Messages, or copy the link.", style: {color: on_surface_variant}}

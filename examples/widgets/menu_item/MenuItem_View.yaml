@@ -1,0 +1,136 @@
+root:
+  name: root
+  widget: ScrollView
+  style: {width: expand, height: expand}
+  children:
+    - widget: Vertical
+      style:
+        background: surface
+        padding: 32
+        spacing: 20
+        width: expand
+        cross_alignment: stretch
+      children:
+        - name: title
+          widget: Text
+          text: "Menu Item"
+          style: {text_style: headline-small, color: on_surface}
+
+        - name: summary
+          widget: Text
+          text: "One row of a Menu: 48dp tall, 12dp side padding -- denser than a ListItem."
+          style: {text_style: body-large, color: on_surface_variant}
+
+        - {name: div1, widget: Divider, style: {width: expand}}
+
+        - name: explanation
+          widget: Text
+          text: |
+            `icon:` is an optional 24dp leading icon (`on_surface_variant`,
+            like File/Edit/View below); `supporting_text:` is the trailing
+            text (a keyboard shortcut, in practice), drawn `on_surface_variant`
+            at the far edge. `style.has_submenu` swaps that trailing slot for
+            a 24dp `chevron_right` instead -- the two trailing contents are
+            mutually exclusive, a row that opens a submenu does not also
+            carry its own shortcut. The icon slot is independent of both.
+
+            Below is a real menu bar, not just an item in isolation: File,
+            Edit, View, and Help each open their own `Menu`, and View's
+            "Panels" is a genuine submenu -- a second `Menu` overlay
+            anchored to that item's own name, the same mechanism
+            `MenuItem`'s own docstring describes. Click anything and the
+            readout below the bar confirms the click actually arrived.
+          style: {text_style: body-medium, color: on_surface_variant}
+
+        - {name: div2, widget: Divider, style: {width: expand}}
+
+        - name: live_heading
+          widget: Text
+          text: "Live example"
+          style: {text_style: title-medium, color: primary}
+
+        - name: live_demo
+          widget: Vertical
+          style: {spacing: 8, width: expand}
+          children:
+            - name: menu_bar
+              widget: Horizontal
+              style: {spacing: 4}
+              children:
+                - {name: file, widget: Button, text: "File", style: {variant: text, height: 32}, handlers: {on_click: toggle_menu}}
+                - {name: edit, widget: Button, text: "Edit", style: {variant: text, height: 32}, handlers: {on_click: toggle_menu}}
+                - {name: view, widget: Button, text: "View", style: {variant: text, height: 32}, handlers: {on_click: toggle_menu}}
+                - {name: help, widget: Button, text: "Help", style: {variant: text, height: 32}, handlers: {on_click: toggle_menu}}
+            - widget: Text
+              text: "Last clicked: {{ last_clicked.get() }}"
+              style: {color: on_surface_variant}
+
+        - {name: div3, widget: Divider, style: {width: expand}}
+
+        - name: code_heading
+          widget: Text
+          text: "Source"
+          style: {text_style: title-medium, color: primary}
+
+        - name: code_panels
+          widget: Horizontal
+          style: {spacing: 16, width: expand, height: 260}
+          children:
+            - name: yaml_source
+              widget: CodeEditor
+              value: "{{ view_source }}"
+              style: {width: expand, height: expand, language: yaml, read_only: true}
+            - name: python_source
+              widget: CodeEditor
+              value: "{{ viewmodel_source }}"
+              style: {width: expand, height: expand, language: python, read_only: true}
+
+overlays:
+  - name: file_menu
+    widget: Menu
+    open: "{{ open_menu.get() == 'file' }}"
+    style: {anchor: file}
+    handlers: {on_dismiss: close_menu}
+    children:
+      - {name: new_file, widget: MenuItem, text: "New", icon: insert_drive_file, supporting_text: "Ctrl+N", handlers: {on_click: pick}}
+      - {name: open_file, widget: MenuItem, text: "Open", icon: folder_open, supporting_text: "Ctrl+O", handlers: {on_click: pick}}
+      - {name: save_file, widget: MenuItem, text: "Save", icon: save, supporting_text: "Ctrl+S", handlers: {on_click: pick}}
+      - {name: quit_file, widget: MenuItem, text: "Exit", icon: logout, supporting_text: "Ctrl+Q", handlers: {on_click: pick}}
+
+  - name: edit_menu
+    widget: Menu
+    open: "{{ open_menu.get() == 'edit' }}"
+    style: {anchor: edit}
+    handlers: {on_dismiss: close_menu}
+    children:
+      - {name: cut, widget: MenuItem, text: "Cut", icon: content_cut, supporting_text: "Ctrl+X", handlers: {on_click: pick}}
+      - {name: copy, widget: MenuItem, text: "Copy", icon: content_copy, supporting_text: "Ctrl+C", handlers: {on_click: pick}}
+      - {name: paste, widget: MenuItem, text: "Paste", icon: content_paste, supporting_text: "Ctrl+V", handlers: {on_click: pick}}
+
+  - name: view_menu
+    widget: Menu
+    open: "{{ open_menu.get() == 'view' }}"
+    style: {anchor: view}
+    handlers: {on_dismiss: close_menu}
+    children:
+      - {name: zoom_in, widget: MenuItem, text: "Zoom In", icon: zoom_in, supporting_text: "Ctrl++", handlers: {on_click: pick}}
+      - {name: zoom_out, widget: MenuItem, text: "Zoom Out", icon: zoom_out, supporting_text: "Ctrl+-", handlers: {on_click: pick}}
+      - {name: panels, widget: MenuItem, text: "Panels", icon: folder, style: {has_submenu: true}, handlers: {on_click: open_panels}}
+
+  - name: panels_menu
+    widget: Menu
+    open: "{{ panels_open.get() }}"
+    style: {anchor: panels}
+    handlers: {on_dismiss: close_panels}
+    children:
+      - {name: sidebar, widget: MenuItem, text: "Sidebar", handlers: {on_click: pick}}
+      - {name: console, widget: MenuItem, text: "Console", handlers: {on_click: pick}}
+
+  - name: help_menu
+    widget: Menu
+    open: "{{ open_menu.get() == 'help' }}"
+    style: {anchor: help}
+    handlers: {on_dismiss: close_menu}
+    children:
+      - {name: docs, widget: MenuItem, text: "Documentation", supporting_text: "F1", handlers: {on_click: pick}}
+      - {name: about, widget: MenuItem, text: "About", handlers: {on_click: pick}}

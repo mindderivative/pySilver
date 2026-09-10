@@ -1,0 +1,46 @@
+name: root
+widget: Vertical
+style:
+  background: surface
+  padding: 32
+  spacing: 20
+  width: expand
+  height: expand
+  cross_alignment: stretch
+children:
+  - name: heading
+    widget: Text
+    text: "pySilver counter"
+    style: {color: on_surface, font_size: 22}
+
+  - name: card
+    widget: Container
+    style:
+      height: 96
+      background: surface_container_high
+      corner_radius: 16
+      padding: 20
+      border: {width: 1, color: outline_variant}
+      shadow: {blur: 14, offset_y: 4}
+    children:
+      - name: readout
+        widget: Text
+        text: "You have clicked {{ count.get() }} times"
+        style: {color: on_surface_variant, font_size: 16}
+
+  - name: actions
+    widget: Horizontal
+    style: {height: 48, spacing: 12, width: expand}
+    children:
+      - name: inc
+        widget: Button
+        style: {width: 200, height: 48, background: primary,
+                color: on_primary, corner_radius: 24}
+        text: "Increment"
+        handlers: {on_click: increment}
+      - name: clear
+        widget: Button
+        style: {width: 140, height: 48, background: secondary_container,
+                color: on_secondary_container, corner_radius: 24}
+        text: "Reset"
+        handlers: {on_click: reset}

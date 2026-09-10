@@ -1,0 +1,125 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Shape"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "Not an M3 component: a regular polygon, drawn as an analytic distance field, borrowing M3's shape system rather than a spec."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          M3 has no shape *component*, but it does have a shape
+          *system*: "the Material shape library contains many types of
+          shapes that can all morph seamlessly into each other" -- the
+          system is what's borrowed here, not a spec table. `sides`,
+          `rotation`, and `corner_radius` are plain instance floats,
+          drawn with a shader branch rather than a rasterised path
+          specifically so a shape that morphs, spins, or scales doesn't
+          thrash the glyph atlas the way animating a cached shape would.
+          `spin:`/`morph:` below opt one into continuous rotation and a
+          continuous sides oscillation, using that same free-to-animate
+          property rather than anything special-cased.
+
+          Use cases: a Shape is the right tool for a decorative or
+          data-driven mark that needs to change continuously at
+          runtime -- a status dot, a data-viz glyph, an icon-adjacent
+          accent -- rather than a fixed vector asset.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Vertical
+        style: {spacing: 16}
+        children:
+          - name: sides_row
+            widget: Horizontal
+            style: {height: 64, spacing: 16, cross_alignment: center}
+            children:
+              - {name: shape_tri, widget: Shape, style: {width: 56, height: 56, sides: 3, background: primary}}
+              - {name: shape_pent, widget: Shape, style: {width: 56, height: 56, sides: 5, background: secondary}}
+              - {name: shape_hex, widget: Shape, style: {width: 56, height: 56, sides: 6, background: tertiary}}
+              - {name: shape_circle, widget: Shape, style: {width: 56, height: 56, sides: 32, background: error}}
+
+          - name: rotation_row
+            widget: Horizontal
+            style: {height: 64, spacing: 16, cross_alignment: center}
+            children:
+              - {name: shape_diamond, widget: Shape, style: {width: 56, height: 56, sides: 4, background: primary}}
+              - {widget: Text, text: "rotation: 0", style: {color: on_surface_variant}}
+              - name: shape_square
+                widget: Shape
+                style: {width: 56, height: 56, sides: 4, rotation: 45, background: primary}
+              - {widget: Text, text: "rotation: 45", style: {color: on_surface_variant}}
+
+          - name: corner_radius_row
+            widget: Horizontal
+            style: {height: 64, spacing: 16, cross_alignment: center}
+            children:
+              - name: shape_rounded
+                widget: Shape
+                style: {width: 56, height: 56, sides: 4, corner_radius: 16, background: secondary}
+              - {widget: Text, text: "corner_radius: 16", style: {color: on_surface_variant}}
+              - name: shape_inscribed_circle
+                widget: Shape
+                style: {width: 56, height: 56, sides: 4, corner_radius: 28, background: secondary}
+              - {widget: Text, text: "corner_radius: 28 (maxed -- its inscribed circle)", style: {color: on_surface_variant}}
+
+          - name: animated_row
+            widget: Horizontal
+            style: {height: 64, spacing: 16, cross_alignment: center}
+            children:
+              - name: shape_spin
+                widget: Shape
+                style: {width: 56, height: 56, sides: 4, spin: true, background: tertiary}
+              - {widget: Text, text: "spin: true", style: {color: on_surface_variant}}
+              - name: shape_morph
+                widget: Shape
+                style: {width: 56, height: 56, sides: 3, morph: true, background: tertiary}
+              - {widget: Text, text: "morph: true", style: {color: on_surface_variant}}
+              - name: shape_spin_morph
+                widget: Shape
+                style: {width: 56, height: 56, sides: 3, spin: true, morph: true, background: tertiary}
+              - {widget: Text, text: "spin: true, morph: true", style: {color: on_surface_variant}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

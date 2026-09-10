@@ -1,0 +1,126 @@
+# Input & overlays: getting text from a user, and the transient surfaces
+# that interrupt or supplement the main screen.
+#
+# `name:` lives here, not at the source: call site (see home_View.yaml's
+# comment on why) -- this file's own names stay exactly as written.
+name: input
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style: {width: expand, spacing: 28, padding: 24}
+    children:
+      - widget: Text
+        text: "Input & overlays"
+        style: {text_style: headline-small, color: primary}
+      - widget: Text
+        text: "Text fields for typed input, then every M3 surface that floats above the main content -- a dialog demanding a decision, a popover or tooltip explaining something in place, a menu of choices, a snackbar or sheet that comes and goes."
+        style: {color: on_surface_variant, font_size: 15}
+
+      # ============================================================
+      # Text input
+      # ============================================================
+      - widget: Text
+        text: "Text input"
+        style: {text_style: title-medium, color: primary}
+      - widget: Text
+        text: "TextField is 56dp with two container styles -- filled (a tonal box) or outlined (a stroked one) -- and the same value:/on_change: binding convention every control in this gallery uses, so its content lives in the ViewModel rather than the widget."
+        style: {color: on_surface, font_size: 15}
+      - {name: text_input_div, widget: Divider, style: {width: expand}}
+      - name: text_fields
+        widget: Horizontal
+        style: {height: 64, spacing: 16, width: expand}
+        children:
+          - name: field_filled
+            widget: TextField
+            text: "Email"
+            value: "{{ email.get() }}"
+            supporting_text: "We never share it"
+            style: {width: expand, variant: filled}
+            handlers: {on_change: change_email}
+          - name: field_outlined
+            widget: TextField
+            text: "Search"
+            style: {width: expand, variant: outlined}
+
+      # ============================================================
+      # Overlays
+      # ============================================================
+      - widget: Text
+        text: "Overlays"
+        style: {text_style: title-medium, color: primary}
+      - widget: Text
+        text: "A Dialog demands a decision and blocks the rest of the screen; a Popover explains a control without committing to a whole dialog, and a plain Tooltip is the lightest version of that, with no interactive content. Menu offers a short list of actions anchored to whatever opened it. Snackbar is a brief, self-dismissing status message; BottomSheet and SideSheet are larger surfaces anchored to an edge, for content substantial enough to need scrolling of its own but not important enough to take over the whole window."
+        style: {color: on_surface, font_size: 15}
+      - {name: overlays_div, widget: Divider, style: {width: expand}}
+      - name: overlays_row
+        widget: Horizontal
+        style: {height: 40, spacing: 10, width: expand}
+        children:
+          - name: ask_btn
+            widget: Button
+            text: "Dialog…"
+            style: {height: 40, variant: text}
+            handlers: {on_click: ask}
+          - name: lock_btn
+            widget: Button
+            text: "Locked…"
+            style: {height: 40, variant: text}
+            handlers: {on_click: lock}
+          - name: popover_btn
+            widget: Button
+            text: "Popover…"
+            style: {height: 40, variant: text}
+            handlers: {on_click: open_popover}
+          - name: menu_btn
+            widget: Button
+            text: "Menu…"
+            style: {height: 40, variant: text}
+            handlers: {on_click: open_menu}
+          - name: tooltip_btn
+            widget: Button
+            text: "Tooltip…"
+            style: {height: 40, variant: text}
+            handlers: {on_click: open_tooltip}
+      - name: overlays_row2
+        widget: Horizontal
+        style: {height: 40, spacing: 10, width: expand}
+        children:
+          - name: snackbar_btn
+            widget: Button
+            text: "Snackbar…"
+            style: {height: 40, variant: text}
+            handlers: {on_click: open_snackbar}
+          - name: bottom_sheet_btn
+            widget: Button
+            text: "Bottom sheet…"
+            style: {height: 40, variant: text}
+            handlers: {on_click: open_bottom_sheet}
+          - name: side_sheet_btn
+            widget: Button
+            text: "Side sheet…"
+            style: {height: 40, variant: text}
+            handlers: {on_click: open_side_sheet}
+
+      - widget: Text
+        text: "Wiring it up in Python"
+        style: {text_style: title-medium, color: primary}
+      - widget: CodeEditor
+        value: |
+          class Gallery(ViewModel):
+              def __init__(self) -> None:
+                  self.email = Signal("ada@example.com", name="email")
+                  self.popover_open = Signal(False, name="popover_open")
+
+              def change_email(self, event: Any) -> None:
+                  self.email.set(event.value)
+
+              # Every overlay this view opens needs its own on_dismiss:
+              # a bound open: means closing it locally is not enough to
+              # make it re-openable.
+              def open_popover(self, event: Any) -> None:
+                  self.popover_open.set(True)
+
+              def close_popover(self, event: Any) -> None:
+                  self.popover_open.set(False)
+        style: {height: 190, width: expand, language: python, read_only: true}

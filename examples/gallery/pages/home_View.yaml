@@ -1,0 +1,43 @@
+# The gallery's Home page -- what pySilver is, and what this gallery is for.
+# The first destination in both the rail and the drawer (see gallery_View.yaml).
+#
+# `name:` is set HERE, not at the `source:` call site in gallery_View.yaml --
+# the call site deliberately supplies none, so `spec/include.py` splices this
+# fragment in verbatim with no namespacing of its own internal names (that
+# only happens when the call site itself supplies a `name:`). Every widget
+# name in this file is therefore exactly what a reload, a test, or `find()`
+# sees -- unprefixed -- which is what lets every page share one flat naming
+# scheme with the rest of the gallery instead of gaining a per-page prefix.
+name: home
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style: {width: expand, spacing: 20, padding: 24}
+    children:
+      - widget: Text
+        text: "pySilver"
+        style: {text_style: headline-medium, color: primary}
+
+      - widget: Text
+        text: "A GPU-accelerated, declarative desktop GUI framework for Python. Interfaces are authored in YAML and hot-reloaded live; application logic is plain Python, connected to the view through fine-grained reactive signals rather than a callback wired to every widget by hand."
+        style: {color: on_surface, font_size: 16}
+
+      - widget: Text
+        text: "Every visual primitive -- boxes, borders, shadows, text, images -- is drawn by one instanced WebGPU pipeline in a single draw call, with analytic antialiasing and no rasterised path for shapes or rounded corners. Colour comes from Material Design 3's dynamic colour system: pick one seed colour and the whole 59-token palette, light and dark, follows from it, so switching themes is a single palette-buffer upload with no relayout."
+        style: {color: on_surface, font_size: 16}
+
+      - widget: Divider
+        style: {width: expand}
+
+      - widget: Text
+        text: "About this gallery"
+        style: {text_style: title-medium, color: primary}
+
+      - widget: Text
+        text: "Every widget pySilver implements has a page here, grouped by what it's for rather than listed alphabetically. Each page explains what the widgets are, when to reach for them, and why they're shaped the way they are -- Material Design 3's own guidance where M3 defines the component, or the reasoning pySilver used where it doesn't. Each page also carries a short, read-only Python sample showing how its widgets are actually wired up from a ViewModel."
+        style: {color: on_surface, font_size: 16}
+
+      - widget: Text
+        text: "The rail on the left is real navigation, not a decoration: it's built from the same PageHost and NavigationRail widgets a real pySilver application would use. Click the menu icon at its top to expand it into its labelled form; click Settings, pinned to the bottom, to see the current theme and flip between light and dark."
+        style: {color: on_surface, font_size: 16}

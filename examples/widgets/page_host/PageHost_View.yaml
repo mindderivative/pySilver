@@ -1,0 +1,103 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Page Host"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "A single-active-child container, switched by name -- exactly one child is ever alive at a time."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          `value:` follows the exact selection convention `Tabs`/
+          `NavigationRail`/`SegmentedButton` already use -- the name of
+          the active child. `default:` names a fallback shown whenever
+          `value:` doesn't match any declared child. What's genuinely
+          new here is that only the active child is *alive*: a hidden
+          page never paints, never animates, and a hidden `Terminal`
+          page holds no shell process -- switching disposes the outgoing
+          page and re-arms the incoming one, rather than keeping every
+          page's state ticking in the background the way a `Stack` with
+          everything hidden would.
+
+          Use cases: a navigation shell showing one screen at a time --
+          this whole set of demos, if it were one window instead of 65
+          separate ones, is exactly the shape a real app would use
+          PageHost for.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example -- click to switch pages"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Vertical
+        style: {spacing: 12, width: expand}
+        children:
+          - name: controls
+            widget: Horizontal
+            style: {spacing: 8}
+            children:
+              - {widget: Button, text: "Home", style: {variant: outlined}, handlers: {on_click: go_home}}
+              - {widget: Button, text: "Profile", style: {variant: outlined}, handlers: {on_click: go_profile}}
+              - {widget: Button, text: "Settings", style: {variant: outlined}, handlers: {on_click: go_settings}}
+          - name: host
+            widget: PageHost
+            value: "{{ page.get() }}"
+            default: home
+            style: {width: expand, height: 120, background: surface_container_low, corner_radius: 8}
+            children:
+              - name: home
+                widget: Container
+                style: {padding: 16}
+                children:
+                  - {widget: Text, text: "Home page -- welcome back.", style: {color: on_surface}}
+              - name: profile
+                widget: Container
+                style: {padding: 16}
+                children:
+                  - {widget: Text, text: "Profile page -- name, avatar, bio.", style: {color: on_surface}}
+              - name: settings
+                widget: Container
+                style: {padding: 16}
+                children:
+                  - {widget: Text, text: "Settings page -- preferences live here.", style: {color: on_surface}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

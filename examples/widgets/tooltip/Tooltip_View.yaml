@@ -1,0 +1,85 @@
+root:
+  name: root
+  widget: ScrollView
+  style: {width: expand, height: expand}
+  children:
+    - widget: Vertical
+      style:
+        background: surface
+        padding: 32
+        spacing: 20
+        width: expand
+        cross_alignment: stretch
+      children:
+        - name: title
+          widget: Text
+          text: "Tooltip"
+          style: {text_style: headline-small, color: on_surface}
+
+        - name: summary
+          widget: Text
+          text: "M3's plain tooltip: a brief, inverse-coloured label describing a UI element."
+          style: {text_style: body-large, color: on_surface_variant}
+
+        - {name: div1, widget: Divider, style: {width: expand}}
+
+        - name: explanation
+          widget: Text
+          text: |
+            24dp minimum height, 8dp padding, inverse colours -- container
+            `inverse_surface`, label `inverse_on_surface`. Never modal and
+            never scrimmed: a tooltip explains what is underneath it, so
+            covering that would defeat it. `open:` drives it the same way
+            every overlay does; this demo wires `on_pointer_enter`/
+            `on_pointer_leave` on the trigger, matching the spec's own
+            words: "display informative text when users hover or
+            long-press an element."
+
+            Use cases, from the spec: plain tooltips briefly describe a UI
+            element. They're best used for labelling elements with no
+            visible text, like an icon-only button.
+          style: {text_style: body-medium, color: on_surface_variant}
+
+        - {name: div2, widget: Divider, style: {width: expand}}
+
+        - name: live_heading
+          widget: Text
+          text: "Live example"
+          style: {text_style: title-medium, color: primary}
+
+        - name: live_demo
+          widget: Horizontal
+          children:
+            - name: trigger
+              widget: IconButton
+              icon: "delete"
+              style: {variant: standard}
+              handlers: {on_pointer_enter: show, on_pointer_leave: close}
+
+        - {name: div3, widget: Divider, style: {width: expand}}
+
+        - name: code_heading
+          widget: Text
+          text: "Source"
+          style: {text_style: title-medium, color: primary}
+
+        - name: code_panels
+          widget: Horizontal
+          style: {spacing: 16, width: expand, height: 260}
+          children:
+            - name: yaml_source
+              widget: CodeEditor
+              value: "{{ view_source }}"
+              style: {width: expand, height: expand, language: yaml, read_only: true}
+            - name: python_source
+              widget: CodeEditor
+              value: "{{ viewmodel_source }}"
+              style: {width: expand, height: expand, language: python, read_only: true}
+
+overlays:
+  - name: tip
+    widget: Tooltip
+    open: "{{ tip_open.get() }}"
+    text: "Delete"
+    style: {anchor: trigger}
+    handlers: {on_dismiss: close}

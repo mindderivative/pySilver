@@ -1,0 +1,93 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "List Item"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "M3's list item: 56dp one-line, 72dp two-line, 88dp three-line -- a vertical group optimised for reading."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          `text:` is the headline, `supporting_text:` the second line. A
+          leading icon is a child `Icon` widget rather than a dedicated
+          field, so a list item stays a plain container for whatever
+          leading/trailing content it needs.
+
+          Use cases, from the spec: lists are vertical groups of text,
+          icons, images, and other elements, optimised for reading
+          comprehension. List items can carry multiple actions at once --
+          selection, icon buttons, overflow menus, and more. Use lists for
+          communicating or selecting discrete items, such as choosing from
+          a set of colours.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Vertical
+        style: {width: expand, background: surface_container_low, corner_radius: 12}
+        children:
+          - name: item_one_line
+            widget: ListItem
+            text: "One-line item"
+            style: {variant: one_line, width: expand}
+            children:
+              - {widget: Icon, icon: "inbox", style: {icon_size: 24, color: on_surface_variant}}
+          - {name: sep1, widget: Divider, style: {width: expand, variant: inset, inset: 56}}
+          - name: item_two_line
+            widget: ListItem
+            text: "Two-line item"
+            supporting_text: "With a supporting line beneath the headline"
+            style: {variant: two_line, width: expand}
+            children:
+              - {widget: Icon, icon: "mail", style: {icon_size: 24, color: on_surface_variant}}
+          - {name: sep2, widget: Divider, style: {width: expand, variant: inset, inset: 56}}
+          - name: item_three_line
+            widget: ListItem
+            text: "Three-line item"
+            supporting_text: "A longer supporting line that can wrap onto a second line of its own beneath the headline"
+            style: {variant: three_line, width: expand}
+            children:
+              - {widget: Icon, icon: "drafts", style: {icon_size: 24, color: on_surface_variant}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

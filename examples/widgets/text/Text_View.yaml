@@ -1,0 +1,79 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Text"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "A run of shaped, wrapped text -- the surface for M3's whole type scale."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          `text_style:` names one of M3's fifteen type-scale roles (five
+          sizes -- display, headline, title, body, label -- at three steps
+          each), shown below from largest to smallest. `selectable: true`
+          turns on mouse selection: click to place a caret, drag to
+          extend, double-click for a word, Ctrl+A for all of it, Ctrl+C
+          to copy -- by grapheme cluster throughout, so an edge never
+          lands inside a flag emoji or between a base character and its
+          accent.
+
+          Use cases: Text is the one widget almost everything else in a
+          view sits next to -- a Button's label and a TextField's own
+          caret are painted directly rather than composed from a Text
+          child, but a plain paragraph, a heading, or a data value all
+          reach for this widget.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Vertical
+        style: {spacing: 6}
+        children:
+          - {widget: Text, text: "Display large", style: {text_style: display-large, color: on_surface}}
+          - {widget: Text, text: "Headline medium", style: {text_style: headline-medium, color: on_surface}}
+          - {widget: Text, text: "Title large", style: {text_style: title-large, color: on_surface}}
+          - {widget: Text, text: "Body large -- select me and try Ctrl+C", style: {text_style: body-large, color: on_surface, selectable: true}}
+          - {widget: Text, text: "LABEL SMALL", style: {text_style: label-small, color: on_surface_variant}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

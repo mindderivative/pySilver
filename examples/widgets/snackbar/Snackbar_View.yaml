@@ -1,0 +1,90 @@
+root:
+  name: root
+  widget: ScrollView
+  style: {width: expand, height: expand}
+  children:
+    - widget: Vertical
+      style:
+        background: surface
+        padding: 32
+        spacing: 20
+        width: expand
+        cross_alignment: stretch
+      children:
+        - name: title
+          widget: Text
+          text: "Snackbar"
+          style: {text_style: headline-small, color: on_surface}
+
+        - name: summary
+          widget: Text
+          text: "M3's snackbar: a brief, inverse-coloured notice about a process the app has performed or will perform."
+          style: {text_style: body-large, color: on_surface_variant}
+
+        - {name: div1, widget: Divider, style: {width: expand}}
+
+        - name: explanation
+          widget: Text
+          text: |
+            `inverse_surface` container, 48dp single line growing to 64dp
+            with an action. The 4dp corner radius and 600dp max width are
+            inferred, not quoted -- that page carries no measurement table
+            at all.
+
+            Use cases, from the spec: snackbars inform users of a process
+            an app has performed or will perform. They appear temporarily
+            towards the bottom of the screen and shouldn't interrupt the
+            experience -- people can keep browsing without interacting with
+            it. Only one snackbar may be shown at a time, and it can carry
+            a single optional action.
+
+            `style.auto_dismiss` (seconds, opt-in) is M3's other rule:
+            "snackbars without actions can auto-dismiss after 4-10 seconds"
+            but "snackbars with actions shouldn't auto-dismiss." Below,
+            "Archive email" opens one with an Undo action -- it stays until
+            dismissed. "Mark read" opens the same snackbar with no action --
+            it auto-dismisses on its own after 5 seconds.
+          style: {text_style: body-medium, color: on_surface_variant}
+
+        - {name: div2, widget: Divider, style: {width: expand}}
+
+        - name: live_heading
+          widget: Text
+          text: "Live example"
+          style: {text_style: title-medium, color: primary}
+
+        - name: live_demo
+          widget: Horizontal
+          style: {spacing: 16}
+          children:
+            - {name: trigger, widget: Button, text: "Archive email", style: {variant: filled_tonal}, handlers: {on_click: archive}}
+            - {name: trigger2, widget: Button, text: "Mark read", style: {variant: outlined}, handlers: {on_click: mark_read}}
+
+        - {name: div3, widget: Divider, style: {width: expand}}
+
+        - name: code_heading
+          widget: Text
+          text: "Source"
+          style: {text_style: title-medium, color: primary}
+
+        - name: code_panels
+          widget: Horizontal
+          style: {spacing: 16, width: expand, height: 260}
+          children:
+            - name: yaml_source
+              widget: CodeEditor
+              value: "{{ view_source }}"
+              style: {width: expand, height: expand, language: yaml, read_only: true}
+            - name: python_source
+              widget: CodeEditor
+              value: "{{ viewmodel_source }}"
+              style: {width: expand, height: expand, language: python, read_only: true}
+
+overlays:
+  - name: bar
+    widget: Snackbar
+    open: "{{ bar_open.get() }}"
+    text: "{{ message.get() }}"
+    supporting_text: "{{ action.get() }}"
+    style: {auto_dismiss: 5}
+    handlers: {on_dismiss: close, on_action: undo}

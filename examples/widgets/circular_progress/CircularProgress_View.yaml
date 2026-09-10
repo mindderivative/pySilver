@@ -1,0 +1,94 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Circular Progress"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "M3's circular progress indicator: a 4dp ring, filled clockwise from 12 o'clock."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          Omitting `value:` selects the indeterminate form: a fixed-length
+          arc that rotates continuously, since a circular track has no
+          leading or trailing edge for a bar to grow out of. "Track
+          thickness: Fixed (4dp)"; "circular indicators animate from the
+          top of the track, clockwise by default" -- both quoted directly.
+          The 48dp default diameter is pySilver's own choice, not a quoted
+          figure (that page's size table is an image); set `width:` to
+          override.
+
+          Use cases, from the spec: use progress indicators to show the
+          status of ongoing processes, such as loading an app, submitting
+          a form, or saving updates. Prefer one indicator per group of
+          loading items over one per item.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Horizontal
+        style: {spacing: 24, cross_alignment: center}
+        children:
+          - name: indeterminate_column
+            widget: Vertical
+            style: {spacing: 8, cross_alignment: center}
+            children:
+              - {name: indeterminate, widget: CircularProgress}
+              - {widget: Text, text: "Indeterminate", style: {color: on_surface_variant}}
+          - name: determinate_column
+            widget: Vertical
+            style: {spacing: 8, cross_alignment: center}
+            children:
+              - {name: determinate, widget: CircularProgress, value: "{{ progress.get() }}"}
+              - {widget: Text, text: "Determinate", style: {color: on_surface_variant}}
+          - name: controls
+            widget: Vertical
+            style: {spacing: 8}
+            children:
+              - {widget: Button, text: "-10%", style: {variant: outlined}, handlers: {on_click: decrease}}
+              - {widget: Button, text: "+10%", style: {variant: filled_tonal}, handlers: {on_click: increase}}
+              - widget: Text
+                text: "{{ percent.get() }}%"
+                style: {color: on_surface_variant}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

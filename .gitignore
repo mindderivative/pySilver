@@ -1,13 +1,51 @@
-# Python-generated files
+# Python
 __pycache__/
-*.py[oc]
+*.py[cod]
+*.egg-info/
 build/
 dist/
-wheels/
-*.egg-info
+.eggs/
 
-# Virtual environments
-.venv
+# Environments
+.venv/
+venv/
+.env
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Golden-image test failures (baselines ARE tracked)
+tests/golden/failures/
+
+# Editors / desktop
+.vscode/
+.cursor/
+.idea/
+.directory
+
+# MCP local config
+.mcp.json
+.mcp.json.mcpmux-bak
+
+# Personal M3 reference library: 2.2MB of content scraped from m3.material.io,
+# with embedded Google CDN image URLs. Kept locally for the m3-lookup skill and
+# deliberately out of history -- the skill fails loudly if it is absent rather
+# than answering from recalled Material Design knowledge.
+M3-References/
+
+# Superseded skills, kept locally for reference
+.claude/old_skills.bck/
+
+# Full development chat transcript: kept locally for reference, deliberately
+# out of git history.
+CHAT_HISTORY.md
 
 # Local dev CLI config
 .devcli
+
+# Per-developer Claude Code settings
+.claude/settings.local.json

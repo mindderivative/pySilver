@@ -1,0 +1,46 @@
+# A reusable modal dialog, built on the real Dialog widget.
+#
+# Every configurable thing is a declared parameter -- including `open`. A call
+# site may pass only `name:` and `with:`, so anything it needs to control has
+# to be named here. That is the cost of having no merge rules, and the reason
+# the interface is explicit.
+#
+# Note there is no `height:`. Dialog shrink-wraps around its content, which is
+# M3's "Container height: Dynamic" -- the earlier hand-built version carried a
+# hardcoded 170 that was wrong the moment the body text rewrapped.
+params: [title, body]
+name: dialog
+widget: Dialog
+text: "{{ title }}"
+supporting_text: "{{ body }}"
+# Not a parameter any more: this view's own ViewModel owns whether
+# it is up, so the call site does not have to pass it in.
+open: "{{ is_open.get() }}"
+style:
+  modal: true
+  scrim: true
+# Dismissable is the default, and `on_dismiss` is what makes it work: the
+# runtime closing this overlay is only a request, because `open:` is bound to
+# the application's signal and that is the only thing that truly closes it.
+# Without this the dialog would sit there dimmed and unclickable.
+#
+# For a dialog that cannot be dismissed by clicking away, drop this handler and
+# set `dismissable: false` -- the parent stays blocked and focus stays put.
+handlers: {on_dismiss: dismiss}
+children:
+  - name: actions
+    widget: Horizontal
+    style: {width: expand, height: 40, spacing: 8, main_alignment: end}
+    children:
+      - name: cancel
+        widget: Button
+        classes: action
+        text: "Cancel"
+        style: {width: 96, height: 40, variant: text}
+        handlers: {on_click: dismiss}
+      - name: destroy
+        widget: Button
+        classes: action primary
+        text: "Delete"
+        style: {width: 96, height: 40, variant: filled}
+        handlers: {on_click: dismiss}

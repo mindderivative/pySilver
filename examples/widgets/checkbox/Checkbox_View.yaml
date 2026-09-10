@@ -1,0 +1,96 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Checkbox"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "M3's 18dp checkbox: checked, unchecked, or indeterminate for a partly-checked group."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          An 18dp box with a 2dp corner radius. pySilver hit-tests it at that
+          same 18dp size rather than M3's 48dp touch-target minimum, since that
+          minimum is a finger-precision rule and a mouse pointer is
+          pixel-precise; an app that wants the larger target anyway can set
+          `min_hit_size: 48`. `indeterminate:` is M3's third state, a dash
+          instead of a checkmark -- the spec's own words: "If some, but not
+          all, child checkboxes are checked, the parent checkbox becomes an
+          indeterminate checkbox."
+
+          Use cases, from the spec: select one or more options from a list,
+          present a list containing sub-selections, turn an item on or off in
+          a desktop environment, or visually group similar options together.
+          Checkboxes should be used instead of switches when a user needs to
+          review a selection before it applies, rather than have it take
+          effect immediately.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Vertical
+        style: {spacing: 12}
+        children:
+          - name: cb_row
+            widget: Horizontal
+            style: {spacing: 8}
+            children:
+              - name: cb1
+                widget: Checkbox
+                value: "{{ checked.get() }}"
+                handlers: {on_click: toggle}
+              - widget: Text
+                text: "Enable notifications"
+                style: {color: on_surface}
+          - name: cb_indeterminate_row
+            widget: Horizontal
+            style: {spacing: 8}
+            children:
+              - name: cb2
+                widget: Checkbox
+                indeterminate: "true"
+              - widget: Text
+                text: "Some children selected (indeterminate -- a parent state an app computes, not one a user toggles directly)"
+                style: {color: on_surface_variant}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

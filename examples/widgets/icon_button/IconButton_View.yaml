@@ -1,0 +1,92 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Icon Button"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "M3's icon button: a 40dp container, 24dp icon, full radius, four configurations."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          A 40dp container around a 24dp icon, always full radius. `standard`
+          and `outlined` are uncontained (no fill); `filled` and `filled_tonal`
+          add a coloured background, for when the action needs more visual
+          weight.
+
+          Use cases, from the spec: use icon buttons to display common
+          actions. There are conceptually two variants -- default and toggle
+          -- default icon buttons can open other elements, such as a menu or
+          a search field, or take a direct action like sharing or bookmarking.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Horizontal
+        style: {spacing: 16}
+        children:
+          - name: ib_standard
+            widget: IconButton
+            icon: "favorite"
+            style: {variant: standard}
+            handlers: {on_click: press}
+          - name: ib_filled
+            widget: IconButton
+            icon: "favorite"
+            style: {variant: filled}
+            handlers: {on_click: press}
+          - name: ib_tonal
+            widget: IconButton
+            icon: "favorite"
+            style: {variant: filled_tonal}
+            handlers: {on_click: press}
+          - name: ib_outlined
+            widget: IconButton
+            icon: "favorite"
+            style: {variant: outlined}
+            handlers: {on_click: press}
+          - widget: Text
+            text: "Clicked {{ clicks.get() }} times"
+            style: {color: on_surface_variant}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

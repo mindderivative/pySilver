@@ -1,0 +1,88 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Horizontal"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "A flex container laying its children out horizontally, with control over their spacing and alignment."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          pySilver's layout is one downward pass: constraints go down,
+          sizes come back up. Horizontal lays every child out along its main
+          axis (horizontal) first, then positions them per
+          `style.main_alignment` -- start, end, center, or one of three
+          spacing modes -- and per `style.cross_alignment` on the
+          perpendicular axis (vertical). `style.spacing` adds a fixed
+          gap between children on top of whichever alignment is chosen.
+          These are plain style properties, so the buttons below drive
+          them by rebuilding the view in Python and calling
+          `self.app.reload(...)`, the same mechanism hot reload uses.
+
+          Use cases: any horizontal arrangement -- a toolbar, a form's
+          label-and-field pairing, a set of action buttons -- where the
+          exact spacing and alignment matter.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example -- click to change alignment"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Horizontal
+        style: {main_alignment: start, width: expand, height: 72, background: surface_container_low, corner_radius: 8}
+        children:
+          - {widget: Container, style: {width: 48, height: 48, background: primary, corner_radius: 8}}
+          - {widget: Container, style: {width: 48, height: 48, background: secondary, corner_radius: 8}}
+          - {widget: Container, style: {width: 48, height: 48, background: tertiary, corner_radius: 8}}
+
+      - widget: Text
+        text: "main_alignment: start"
+        name: label
+        style: {color: on_surface_variant}
+
+      - name: controls
+        widget: Horizontal
+        style: {spacing: 8}
+        children:
+          - {widget: Button, text: "Cycle main_alignment", style: {variant: outlined}, handlers: {on_click: cycle_alignment}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

@@ -1,0 +1,93 @@
+# Advanced: the three widgets built from pySilver's own editing and drawing
+# primitives rather than from an M3 spec -- a wired node graph, a real code
+# editor, and a real shell.
+#
+# `name:` lives here, not at the source: call site (see home_View.yaml's
+# comment on why) -- this file's own names stay exactly as written.
+name: advanced
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style: {width: expand, spacing: 28, padding: 24}
+    children:
+      - widget: Text
+        text: "Advanced"
+        style: {text_style: headline-small, color: primary}
+      - widget: Text
+        text: "None of these three have an M3 component to build against, so each is designed from pySilver's own primitives instead: a pannable, draggable canvas; the shared text-editing model TextField and CodeEditor both build on; a real spawned shell. This page is also the one where PageHost's lazy-activation design matters most: the Terminal below spawns no shell process until this page is actually navigated to."
+        style: {color: on_surface_variant, font_size: 15}
+
+      # ============================================================
+      # Node graph
+      # ============================================================
+      - widget: Text
+        text: "Node graph"
+        style: {text_style: title-medium, color: primary}
+      - widget: Text
+        text: "A pannable surface of draggable, wired nodes -- for visual programming, dataflow editors, or anything shaped like a diagram of connected boxes rather than a document."
+        style: {color: on_surface, font_size: 15}
+      - {name: nodegraph_div, widget: Divider, style: {width: expand}}
+      - name: nodegraph_demo
+        widget: NodeGraph
+        style: {height: 200, width: expand}
+        edges:
+          - {source: "node_in.out", target: "node_proc.in"}
+          - {source: "node_proc.out", target: "node_out.in"}
+        children:
+          - {name: node_in,   widget: Node, text: "Input",   outputs: "out", style: {x: 20,  y: 70}}
+          - {name: node_proc, widget: Node, text: "Process", inputs: "in", outputs: "out", style: {x: 220, y: 20}}
+          - {name: node_out,  widget: Node, text: "Output",  inputs: "in", style: {x: 420, y: 70}}
+
+      # ============================================================
+      # Code editor
+      # ============================================================
+      - widget: Text
+        text: "Code editor"
+        style: {text_style: title-medium, color: primary}
+      - widget: Text
+        text: "A real, editable, syntax-highlighted, line-numbered multi-line buffer -- try editing the sample below. Every read-only code sample elsewhere on this page and every other page in this gallery is this exact widget with style.read_only: true set on it: selectable and copyable, but not editable."
+        style: {color: on_surface, font_size: 15}
+      - {name: codeeditor_div, widget: Divider, style: {width: expand}}
+      - name: codeeditor_demo
+        widget: CodeEditor
+        value: |
+          def fib(n: int) -> int:
+              """Return the n-th Fibonacci number."""
+              a, b = 0, 1
+              for _ in range(n):
+                  a, b = b, a + b
+              return a
+        style: {height: 200, width: expand, language: python, line_numbers: true}
+
+      # ============================================================
+      # Terminal
+      # ============================================================
+      - widget: Text
+        text: "Terminal"
+        style: {text_style: title-medium, color: primary}
+      - widget: Text
+        text: "A real shell, spawned and parsed by pySilver itself -- point it at a shell and it works, rather than just displaying frames an application decodes and pushes the way Video does. It only exists while this page is the one showing: navigate away and the shell process stops; come back and a fresh one starts."
+        style: {color: on_surface, font_size: 15}
+      - {name: terminal_div, widget: Divider, style: {width: expand}}
+      - name: terminal_demo
+        widget: Terminal
+        style: {height: 200, width: expand}
+
+      - widget: Text
+        text: "Wiring it up in Python"
+        style: {text_style: title-medium, color: primary}
+      - widget: CodeEditor
+        value: |
+          # NodeGraph edges are declared once, in the view file, as
+          # {source, target} pairs of "node.port" strings -- there is no
+          # Python-side wiring for the graph's own topology.
+
+          class Gallery(ViewModel):
+              # CodeEditor's own value: is the buffer, same as TextField.
+              def change_source(self, event: Any) -> None:
+                  self.source_code.set(event.value)
+
+          # Terminal needs no handlers at all -- style.shell names the
+          # command line, and the widget owns its own PTY end to end.
+        style: {height: 190, width: expand, language: python, read_only: true}

@@ -1,0 +1,90 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Icon"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "A Material Symbols glyph, with M3's FILL and weight axes live."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          M3 treats icons as a system asset (the Material Symbols font), not
+          as a component with its own catalogue page -- there is no
+          "Icons" entry in the component index to cite. pySilver bundles a
+          218-icon subset of Material Symbols with the `FILL` (0-1) and
+          `wght` (100-700) axes live; the glyph name goes in `icon:`, and
+          `icon_size` / `icon_fill` / `icon_weight` control the rest. FILL is
+          how M3 expresses selected versus unselected on nav items and
+          toggles -- reach for it instead of swapping to a visually different
+          icon for the same meaning.
+
+          Use cases: an icon on its own communicates an action or a state at a
+          glance -- `home` below is shown at `FILL: 0` and `FILL: 1`, the exact
+          outlined-versus-filled contrast a selected nav destination uses.
+          Default size is 24dp, M3's standard; weights below 200 are lifted
+          automatically at that size per M3's own guidance, since a hairline
+          weight reads poorly that small.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Horizontal
+        style: {spacing: 24, width: expand, cross_alignment: center}
+        children:
+          - name: icon_outlined
+            widget: Icon
+            icon: "home"
+            style: {icon_size: 40, icon_fill: 0}
+          - {widget: Text, text: "FILL: 0", style: {color: on_surface_variant}}
+          - name: icon_filled
+            widget: Icon
+            icon: "home"
+            style: {icon_size: 40, icon_fill: 1}
+          - {widget: Text, text: "FILL: 1", style: {color: on_surface_variant}}
+          - {name: icon_weight_light, widget: Icon, icon: "favorite", style: {icon_size: 32, icon_weight: 300}}
+          - {widget: Text, text: "wght: 300", style: {color: on_surface_variant}}
+          - {name: icon_weight_bold, widget: Icon, icon: "favorite", style: {icon_size: 32, icon_weight: 700}}
+          - {widget: Text, text: "wght: 700", style: {color: on_surface_variant}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

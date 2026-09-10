@@ -1,0 +1,218 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Button Group"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "M3 Expressive's button group: an invisible container that spaces buttons, merges their shape when connected, and morphs a toggled button's shape (and, when standard, its width)."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          "Button groups are invisible containers that add padding
+          between buttons and modify button shape" -- quoted directly.
+          Standard uses 8dp gaps and leaves every button fully rounded;
+          connected uses 2dp gaps and squares every touching corner to a
+          size-appropriate figure while the group's two outer ends stay
+          fully round.
+
+          `Button` itself carries `style.size` now -- `extra_small`
+          through `extra_large` -- and a group reads it from its own
+          children rather than needing a `size:` of its own, since M3
+          expects every button in one group to share a size. Leaving
+          `size:` unset keeps a button's original 40dp/24dp shape exactly,
+          unrelated to any single row of the real ladder below it.
+
+          Click a button below to toggle it: COMPONENT_BUTTONS.md's own
+          "Corner sizes" table gives the shape morph exact dp figures --
+          16dp when selected, 12dp while pressed (every button, not just
+          grouped ones). A standard group's selected button ALSO grows
+          width, visibly shifting its neighbours along the row -- an
+          ordinary Flex reflow, not a special case; a connected group's
+          selection changes shape only.
+
+          Use cases, from the spec: standard groups space related,
+          independently-toggleable buttons -- like the formatting toolbar
+          below, where
+          bold/italic/underline can all be on at once; connected groups
+          replace the deprecated segmented button, here wired as a
+          single-select switch -- exactly one of Day/Week/Month is ever
+          selected, by binding all three to one shared value instead of
+          three independent toggles.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example -- click a button to toggle it"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Vertical
+        style: {spacing: 16, width: expand}
+        children:
+          - {widget: Text, text: "Standard", style: {color: on_surface_variant}}
+          - name: standard
+            widget: ButtonGroup
+            style: {variant: standard}
+            children:
+              - name: bold
+                widget: Button
+                text: "Bold"
+                value: "{{ bold.get() }}"
+                style: {variant: outlined}
+                handlers: {on_click: toggle_bold}
+              - name: italic
+                widget: Button
+                text: "Italic"
+                value: "{{ italic.get() }}"
+                style: {variant: outlined}
+                handlers: {on_click: toggle_italic}
+              - name: underline
+                widget: Button
+                text: "Underline"
+                value: "{{ underline.get() }}"
+                style: {variant: outlined}
+                handlers: {on_click: toggle_underline}
+          - {widget: Text, text: "Connected -- single-select", style: {color: on_surface_variant}}
+          - name: connected
+            widget: ButtonGroup
+            style: {variant: connected}
+            children:
+              - name: day
+                widget: Button
+                text: "Day"
+                value: "{{ period.get() == 'day' }}"
+                style: {variant: outlined}
+                handlers: {on_click: select_day}
+              - name: week
+                widget: Button
+                text: "Week"
+                value: "{{ period.get() == 'week' }}"
+                style: {variant: outlined}
+                handlers: {on_click: select_week}
+              - name: month
+                widget: Button
+                text: "Month"
+                value: "{{ period.get() == 'month' }}"
+                style: {variant: outlined}
+                handlers: {on_click: select_month}
+
+      - {name: div_ladder, widget: Divider, style: {width: expand}}
+
+      - name: ladder_heading
+        widget: Text
+        text: "Size ladder -- extra_small through extra_large"
+        style: {text_style: title-medium, color: primary}
+
+      - name: ladder_explanation
+        widget: Text
+        text: |
+          Each row is a STANDARD group (like the toolbar above) at a
+          different `style.size`, set on the `Button` children rather
+          than the group. All three buttons are independently toggleable,
+          same as Bold/Italic/Underline -- click any of them and it grows
+          and shifts the others along the row.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - name: ladder_demo
+        widget: Vertical
+        style: {spacing: 16, width: expand, cross_alignment: start}
+        children:
+          - name: row_xs
+            widget: Horizontal
+            style: {spacing: 16, cross_alignment: center}
+            children:
+              - {widget: Text, text: "extra_small", style: {width: 100, color: on_surface_variant}}
+              - name: ladder_xs
+                widget: ButtonGroup
+                style: {variant: standard}
+                children:
+                  - {name: xs_a, widget: Button, text: "Save", value: "{{ ladder_xs_save.get() }}", style: {variant: outlined, size: extra_small}, handlers: {on_click: toggle_ladder_xs_save}}
+                  - {name: xs_b, widget: Button, text: "Share", value: "{{ ladder_xs_share.get() }}", style: {variant: outlined, size: extra_small}, handlers: {on_click: toggle_ladder_xs_share}}
+                  - {name: xs_c, widget: Button, text: "Delete", value: "{{ ladder_xs_delete.get() }}", style: {variant: outlined, size: extra_small}, handlers: {on_click: toggle_ladder_xs_delete}}
+          - name: row_s
+            widget: Horizontal
+            style: {spacing: 16, cross_alignment: center}
+            children:
+              - {widget: Text, text: "small", style: {width: 100, color: on_surface_variant}}
+              - name: ladder_s
+                widget: ButtonGroup
+                style: {variant: standard}
+                children:
+                  - {name: s_a, widget: Button, text: "Save", value: "{{ ladder_s_save.get() }}", style: {variant: outlined, size: small}, handlers: {on_click: toggle_ladder_s_save}}
+                  - {name: s_b, widget: Button, text: "Share", value: "{{ ladder_s_share.get() }}", style: {variant: outlined, size: small}, handlers: {on_click: toggle_ladder_s_share}}
+                  - {name: s_c, widget: Button, text: "Delete", value: "{{ ladder_s_delete.get() }}", style: {variant: outlined, size: small}, handlers: {on_click: toggle_ladder_s_delete}}
+          - name: row_m
+            widget: Horizontal
+            style: {spacing: 16, cross_alignment: center}
+            children:
+              - {widget: Text, text: "medium", style: {width: 100, color: on_surface_variant}}
+              - name: ladder_m
+                widget: ButtonGroup
+                style: {variant: standard}
+                children:
+                  - {name: m_a, widget: Button, text: "Save", value: "{{ ladder_m_save.get() }}", style: {variant: outlined, size: medium}, handlers: {on_click: toggle_ladder_m_save}}
+                  - {name: m_b, widget: Button, text: "Share", value: "{{ ladder_m_share.get() }}", style: {variant: outlined, size: medium}, handlers: {on_click: toggle_ladder_m_share}}
+                  - {name: m_c, widget: Button, text: "Delete", value: "{{ ladder_m_delete.get() }}", style: {variant: outlined, size: medium}, handlers: {on_click: toggle_ladder_m_delete}}
+          - name: row_l
+            widget: Horizontal
+            style: {spacing: 16, cross_alignment: center}
+            children:
+              - {widget: Text, text: "large", style: {width: 100, color: on_surface_variant}}
+              - name: ladder_l
+                widget: ButtonGroup
+                style: {variant: standard}
+                children:
+                  - {name: l_a, widget: Button, text: "Save", value: "{{ ladder_l_save.get() }}", style: {variant: outlined, size: large}, handlers: {on_click: toggle_ladder_l_save}}
+                  - {name: l_b, widget: Button, text: "Share", value: "{{ ladder_l_share.get() }}", style: {variant: outlined, size: large}, handlers: {on_click: toggle_ladder_l_share}}
+                  - {name: l_c, widget: Button, text: "Delete", value: "{{ ladder_l_delete.get() }}", style: {variant: outlined, size: large}, handlers: {on_click: toggle_ladder_l_delete}}
+          - name: row_xl
+            widget: Horizontal
+            style: {spacing: 16, cross_alignment: center}
+            children:
+              - {widget: Text, text: "extra_large", style: {width: 100, color: on_surface_variant}}
+              - name: ladder_xl
+                widget: ButtonGroup
+                style: {variant: standard}
+                children:
+                  - {name: xl_a, widget: Button, text: "Save", value: "{{ ladder_xl_save.get() }}", style: {variant: outlined, size: extra_large}, handlers: {on_click: toggle_ladder_xl_save}}
+                  - {name: xl_b, widget: Button, text: "Share", value: "{{ ladder_xl_share.get() }}", style: {variant: outlined, size: extra_large}, handlers: {on_click: toggle_ladder_xl_share}}
+                  - {name: xl_c, widget: Button, text: "Delete", value: "{{ ladder_xl_delete.get() }}", style: {variant: outlined, size: extra_large}, handlers: {on_click: toggle_ladder_xl_delete}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

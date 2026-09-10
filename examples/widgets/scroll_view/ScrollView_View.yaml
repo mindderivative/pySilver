@@ -1,0 +1,88 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Scroll View"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "A viewport that clips one oversized child and scrolls it -- this very page is one, wrapped around everything below."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          Wraps a single child, normally a Vertical of many rows. The
+          viewport must be bounded on its scroll axis -- one that
+          shrink-wrapped to its content would be exactly as tall as the
+          thing it's supposed to be scrolling, so pySilver raises rather
+          than silently doing nothing, the same choice `Horizontal`/`Vertical`
+          make for a flexible child in unbounded space. Every demo in
+          this whole set of pages is itself wrapped in a ScrollView with
+          `style: {width: expand, height: expand}` for exactly this
+          reason: the summary, explanation, live example, and two code
+          panels together are usually taller than the window.
+
+          Use cases: any content that may exceed its available space --
+          a long list, a settings page, or, as here, an entire demo page.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example -- scroll inside the box"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: ScrollView
+        style: {width: expand, height: 200, background: surface_container_low, corner_radius: 8}
+        children:
+          - widget: Vertical
+            style: {padding: 12, spacing: 8}
+            children:
+              - {widget: Text, text: "Row 1", style: {color: on_surface}}
+              - {widget: Text, text: "Row 2", style: {color: on_surface}}
+              - {widget: Text, text: "Row 3", style: {color: on_surface}}
+              - {widget: Text, text: "Row 4", style: {color: on_surface}}
+              - {widget: Text, text: "Row 5", style: {color: on_surface}}
+              - {widget: Text, text: "Row 6", style: {color: on_surface}}
+              - {widget: Text, text: "Row 7", style: {color: on_surface}}
+              - {widget: Text, text: "Row 8", style: {color: on_surface}}
+              - {widget: Text, text: "Row 9", style: {color: on_surface}}
+              - {widget: Text, text: "Row 10", style: {color: on_surface}}
+              - {widget: Text, text: "Row 11", style: {color: on_surface}}
+              - {widget: Text, text: "Row 12", style: {color: on_surface}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

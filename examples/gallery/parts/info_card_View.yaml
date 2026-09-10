@@ -1,0 +1,18 @@
+# The elevated card at the top of the gallery.
+params: [body]
+name: card
+widget: Card
+style:
+  height: 92
+  variant: elevated
+  corner_radius: 16
+  padding: 16
+children:
+  # Selectable, so the gallery exercises copying: drag to select, Ctrl+C, and
+  # paste into another application. Copying out needs a real keystroke -- a
+  # Wayland compositor will only accept a new selection when there is a recent
+  # input event behind it -- which is exactly what Ctrl+C provides.
+  - name: text
+    widget: Text
+    text: "{{ body }}"
+    style: {color: on_surface_variant, font_size: 14, selectable: true}

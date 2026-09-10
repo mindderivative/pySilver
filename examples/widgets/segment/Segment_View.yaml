@@ -1,0 +1,78 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Segment"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "One option inside a SegmentedButton: a label that grows an 18dp leading checkmark when selected."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          A selected segment slides in an 18dp leading checkmark, which
+          changes the segment's own width -- the label and every
+          neighbouring segment moves with it. The container itself stays
+          a fixed 40dp tall regardless. A Segment only makes sense inside
+          a `SegmentedButton`, so this demo hosts three of them minimally;
+          Segment's own anatomy is the focus here, not the container
+          (which has its own demo).
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Vertical
+        style: {spacing: 8, width: expand}
+        children:
+          - name: segmented
+            widget: SegmentedButton
+            value: "{{ selected.get() }}"
+            style: {width: expand}
+            children:
+              - {name: list_view, widget: Segment, text: "List", handlers: {on_click: select}}
+              - {name: grid_view, widget: Segment, text: "Grid", handlers: {on_click: select}}
+              - {name: map_view, widget: Segment, text: "Map", handlers: {on_click: select}}
+          - widget: Text
+            text: "Selected: {{ selected.get() }}"
+            style: {color: on_surface_variant}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

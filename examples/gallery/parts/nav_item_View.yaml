@@ -1,0 +1,10 @@
+# One navigation destination: an icon plus its label, wired to the gallery's
+# single generic navigation handler (`select_nav`). Included once per rail
+# destination in gallery_View.yaml -- each inclusion supplies its own
+# `name:` (`nav_`-prefixed), since PageHost's own pages further down share
+# the same view file and therefore the same name-uniqueness requirement.
+params: [icon, label]
+widget: NavItem
+icon: "{{ icon }}"
+label: "{{ label }}"
+handlers: {on_click: select_nav}

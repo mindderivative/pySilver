@@ -1,0 +1,88 @@
+root:
+  name: root
+  widget: ScrollView
+  style: {width: expand, height: expand}
+  children:
+    - widget: Vertical
+      style:
+        background: surface
+        padding: 32
+        spacing: 20
+        width: expand
+        cross_alignment: stretch
+      children:
+        - name: title
+          widget: Text
+          text: "Menu"
+          style: {text_style: headline-small, color: on_surface}
+
+        - name: summary
+          widget: Text
+          text: "M3's baseline menu: a temporary surface listing a set of actions, anchored to whatever opened it."
+          style: {text_style: body-large, color: on_surface_variant}
+
+        - {name: div1, widget: Divider, style: {width: expand}}
+
+        - name: explanation
+          widget: Text
+          text: |
+            4dp corners, 112-280dp wide, 8dp vertical padding. `style.anchor:`
+            names the trigger element; the overlay host positions the menu
+            below it, flipping above when it would overflow the window.
+            Cascading submenus reuse this same anchor mechanism (a
+            `MenuItem` with `style.has_submenu` anchors a second `Menu`
+            beside itself). Each row's own optional `icon:` (24dp, leading
+            the label) is independent of its trailing shortcut -- both can
+            appear on the same row.
+
+            Use cases, from the spec: use a menu to show a temporary set of
+            actions. To show actions on screen at all times instead, use a
+            toolbar.
+          style: {text_style: body-medium, color: on_surface_variant}
+
+        - {name: div2, widget: Divider, style: {width: expand}}
+
+        - name: live_heading
+          widget: Text
+          text: "Live example"
+          style: {text_style: title-medium, color: primary}
+
+        - name: live_demo
+          widget: Horizontal
+          style: {spacing: 16}
+          children:
+            - {name: trigger, widget: Button, text: "Actions", style: {variant: outlined}, handlers: {on_click: open_menu}}
+            - widget: Text
+              text: "Last picked: {{ last_action.get() }}"
+              style: {color: on_surface_variant}
+
+        - {name: div3, widget: Divider, style: {width: expand}}
+
+        - name: code_heading
+          widget: Text
+          text: "Source"
+          style: {text_style: title-medium, color: primary}
+
+        - name: code_panels
+          widget: Horizontal
+          style: {spacing: 16, width: expand, height: 260}
+          children:
+            - name: yaml_source
+              widget: CodeEditor
+              value: "{{ view_source }}"
+              style: {width: expand, height: expand, language: yaml, read_only: true}
+            - name: python_source
+              widget: CodeEditor
+              value: "{{ viewmodel_source }}"
+              style: {width: expand, height: expand, language: python, read_only: true}
+
+overlays:
+  - name: menu
+    widget: Menu
+    open: "{{ menu_open.get() }}"
+    style: {anchor: trigger}
+    handlers: {on_dismiss: close_menu}
+    children:
+      - {name: cut, widget: MenuItem, text: "Cut", icon: content_cut, supporting_text: "Ctrl+X", handlers: {on_click: pick}}
+      - {name: copy, widget: MenuItem, text: "Copy", icon: content_copy, supporting_text: "Ctrl+C", handlers: {on_click: pick}}
+      - {name: paste, widget: MenuItem, text: "Paste", icon: content_paste, supporting_text: "Ctrl+V", handlers: {on_click: pick}}

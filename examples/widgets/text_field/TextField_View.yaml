@@ -1,0 +1,115 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Text Field"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "M3's text field: a 56dp container that takes typing, filled or outlined."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          56dp container height, 16dp left/right padding without icons, 8dp
+          top/bottom, 4dp corner radius, a 1dp indicator that becomes 2dp when
+          focused, supporting text 4dp below the container. The label "floats
+          upward" to a smaller type scale when focused or populated -- those
+          figures tile the container exactly: 8dp padding, a 16dp floated
+          label line, a 24dp input line, 8dp padding (8+16+24+8 = 56).
+
+          Use cases, from the spec: use a text field when someone needs to
+          enter text into a UI, such as filling in contact or payment
+          information. There are two variants -- filled and outlined -- both
+          shown below.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Horizontal
+        style: {spacing: 16, width: expand}
+        children:
+          - name: field_filled
+            widget: TextField
+            text: "Name"
+            value: "{{ name.get() }}"
+            supporting_text: "As it appears on your ticket"
+            style: {width: expand, variant: filled}
+            handlers: {on_change: change_name}
+          - name: field_outlined
+            widget: TextField
+            text: "Search"
+            style: {width: expand, variant: outlined}
+
+      - name: readout
+        widget: Text
+        text: "Bound value: {{ name.get() }}"
+        style: {color: on_surface_variant}
+
+      - {name: div_bidi, widget: Divider, style: {width: expand}}
+
+      - name: bidi_heading
+        widget: Text
+        text: "Mixed-direction editing"
+        style: {text_style: title-medium, color: primary}
+
+      - name: bidi_explanation
+        widget: Text
+        text: |
+          Type into this field with English and Arabic or Hebrew mixed
+          together (the field already starts with some) -- real UAX #9 bidi
+          resolution, not a single whole-paragraph reversal. Click or arrow
+          through the boundary between scripts and the caret lands on the
+          correct side rather than jumping erratically; a selection that
+          spans the boundary highlights as two separate rects, since the
+          selected text isn't one visually-contiguous span once direction
+          flips partway through it.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - name: field_bidi
+        widget: TextField
+        text: "Mixed direction"
+        value: "{{ bidi_text.get() }}"
+        supporting_text: "English, Arabic, and Hebrew, freely mixed"
+        style: {width: expand, variant: outlined}
+        handlers: {on_change: change_bidi_text}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

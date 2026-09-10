@@ -1,0 +1,79 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Spin Box"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "Not an M3 component: a number with remove/add icon buttons either side, its own answer to a common need."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          Named to avoid M3's own "Stepper" (a multi-step flow indicator,
+          a different widget). The nearest real grounding is the
+          Sliders page's own convention -- "Icon buttons placed outside
+          the slider should have the button role" -- applied here as two
+          40dp icon-button regions flanking a numeric display.
+          `style: {min, max, step}` bound it; either end left unset means
+          unbounded, unlike `Slider`'s own fallback to 0.0/1.0. Typing a
+          value directly is deliberately out of scope -- that needs
+          `TextField`'s whole caret/selection machinery for what would
+          otherwise be a half-built text field wearing this widget's
+          paint.
+
+          Use cases: a small, bounded count someone adjusts one step at a
+          time -- quantity in a cart, a small numeric setting -- where a
+          full text field would be more than the value needs.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Horizontal
+        style: {spacing: 16}
+        children:
+          - {name: qty, widget: SpinBox, value: "{{ qty.get() }}", style: {min: 1, max: 10}, handlers: {on_change: change_qty}}
+          - widget: Text
+            text: "Quantity: {{ qty.get() }}"
+            style: {color: on_surface_variant}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

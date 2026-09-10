@@ -1,0 +1,98 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Radio"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "M3's radio button: a 20dp outer ring with a 10dp inner dot, for a single choice from a list."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          A 20dp outer circle, 10dp inner dot when selected. pySilver's Radio
+          is a plain leaf widget -- unlike Tabs or SegmentedButton, it has no
+          built-in group container, so an application owns the shared "which
+          one is selected" state itself and writes each option's own `value:`
+          from it, exactly the way this demo's ViewModel does.
+
+          Use cases, from the spec: "Radio buttons are the recommended way to
+          allow users to make a single selection from a list of options. Only
+          one radio button can be selected at a time." Radio buttons should
+          always be accompanied by clear inline labels, unlike a checkbox
+          group, which can stand with a single shared label for the whole set.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Vertical
+        style: {spacing: 8}
+        children:
+          - name: option_a
+            widget: Horizontal
+            style: {spacing: 8}
+            children:
+              - name: radio_a
+                widget: Radio
+                value: "{{ 'true' if choice.get() == 'a' else 'false' }}"
+                handlers: {on_click: select}
+              - {widget: Text, text: "Wi-Fi only", style: {color: on_surface}}
+          - name: option_b
+            widget: Horizontal
+            style: {spacing: 8}
+            children:
+              - name: radio_b
+                widget: Radio
+                value: "{{ 'true' if choice.get() == 'b' else 'false' }}"
+                handlers: {on_click: select}
+              - {widget: Text, text: "Wi-Fi and cellular", style: {color: on_surface}}
+          - name: option_c
+            widget: Horizontal
+            style: {spacing: 8}
+            children:
+              - name: radio_c
+                widget: Radio
+                value: "{{ 'true' if choice.get() == 'c' else 'false' }}"
+                handlers: {on_click: select}
+              - {widget: Text, text: "Never", style: {color: on_surface}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

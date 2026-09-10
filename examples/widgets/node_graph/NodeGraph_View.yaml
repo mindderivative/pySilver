@@ -1,0 +1,81 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Node Graph"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "Not an M3 component: a node-based visual editor -- draggable nodes wired by declared edges, with pan and hit-testing reusing existing framework mechanisms."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          An interactive editor, not a thin drawing surface: a `Node` is
+          a real composed element, not something an application paints
+          itself with `Canvas`. Panning reuses `ScrollView`'s own trick
+          exactly -- the viewport origin subtracts the current scroll,
+          so moving it is a paint-time translation, not a relayout.
+          There is no special-case region hit-testing either: a press on
+          a node's title bar is a press on the `Node` element itself,
+          the same way any other widget's content is hit-tested. The
+          `edges:` list on the container names which node output
+          connects to which node input, by `"node.port"` strings. This
+          page is about the container's own panning and wiring; each
+          node's own anatomy (the title bar, the ports, dragging) has
+          its own demo under Node.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example -- drag the background to pan"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: NodeGraph
+        style: {height: 220, width: expand}
+        edges:
+          - {source: "a.out", target: "b.in"}
+          - {source: "b.out", target: "c.in"}
+          - {source: "b.out", target: "d.in"}
+        children:
+          - {name: a, widget: Node, text: "Source", outputs: "out", style: {x: 20, y: 80}}
+          - {name: b, widget: Node, text: "Split", inputs: "in", outputs: "out", style: {x: 220, y: 20}}
+          - {name: c, widget: Node, text: "Branch A", inputs: "in", style: {x: 440, y: 20}}
+          - {name: d, widget: Node, text: "Branch B", inputs: "in", style: {x: 440, y: 140}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

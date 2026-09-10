@@ -1,0 +1,99 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Card"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "M3's card: a 12dp-rounded, 16dp-padded container for content and actions on a single topic, in three variants."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          12dp corner radius, 16dp padding. Elevated cards rest at M3 elevation
+          level 1 (`surface_container_low`, plus a shadow); filled cards sit at
+          level 0 with a `surface_container_highest` background; outlined
+          cards also sit at level 0, on plain `surface` with a 1dp
+          `outline_variant` border. Elevation is approximated with shadow
+          alone here -- the tonal surface shift M3 also specifies is not
+          modelled.
+
+          Use cases, from the spec: use a card to display content and actions
+          on a single topic, kept easy to scan for relevant, actionable
+          information. Cards can also serve as entry points into deeper levels
+          of detail or navigation -- a music album, or a vacation's details.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Horizontal
+        style: {spacing: 16, width: expand}
+        children:
+          - name: card_elevated
+            widget: Card
+            style: {variant: elevated, width: expand}
+            children:
+              - widget: Vertical
+                style: {spacing: 4}
+                children:
+                  - {widget: Text, text: "Elevated", style: {text_style: title-medium, color: on_surface}}
+                  - {widget: Text, text: "Rests above the surface at level 1.", style: {color: on_surface_variant}}
+          - name: card_filled
+            widget: Card
+            style: {variant: filled, width: expand}
+            children:
+              - widget: Vertical
+                style: {spacing: 4}
+                children:
+                  - {widget: Text, text: "Filled", style: {text_style: title-medium, color: on_surface}}
+                  - {widget: Text, text: "A tonal container, no shadow.", style: {color: on_surface_variant}}
+          - name: card_outlined
+            widget: Card
+            style: {variant: outlined, width: expand}
+            children:
+              - widget: Vertical
+                style: {spacing: 4}
+                children:
+                  - {widget: Text, text: "Outlined", style: {text_style: title-medium, color: on_surface}}
+                  - {widget: Text, text: "A hairline border on plain surface.", style: {color: on_surface_variant}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

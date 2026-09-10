@@ -1,0 +1,75 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Carousel"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "M3's carousel: a scrollable, snapping row of items, emphasising visuals over text."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          Drag anywhere on the strip to scroll it; a real drag is a
+          distinct gesture from the wheel support that was already there
+          (both work). M3 names four layouts -- multi-browse, uncontained,
+          hero, and full-screen; `multi_browse` is shown below.
+
+          Use cases, from the spec: carousels display a scrollable list of
+          items. Carousel items emphasise visuals, but can also contain
+          brief text that adapts to the item size. Multi-browse shows at
+          least one large, medium, and small item at a time.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example -- drag to scroll"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Carousel
+        style: {variant: multi_browse, height: 140, width: expand}
+        children:
+          - {name: c0, widget: CarouselItem, text: "Item 1"}
+          - {name: c1, widget: CarouselItem, text: "Item 2"}
+          - {name: c2, widget: CarouselItem, text: "Item 3"}
+          - {name: c3, widget: CarouselItem, text: "Item 4"}
+          - {name: c4, widget: CarouselItem, text: "Item 5"}
+          - {name: c5, widget: CarouselItem, text: "Item 6"}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

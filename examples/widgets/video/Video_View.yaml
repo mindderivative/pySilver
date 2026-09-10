@@ -1,0 +1,73 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Video"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "Not an M3 component: a leaf widget with no content of its own until the application pushes a frame."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          Sizing follows `Image`'s own shape once a frame has arrived: an
+          unsized axis reports the frame's own pixel dimensions. Before
+          the first frame there is nothing to be a size of, so it lays
+          out 0x0. `push_frame` is not thread-safe by itself -- a decoder
+          running on its own thread must hand a frame back with
+          `loop.call_soon_threadsafe(element.push_frame, rgba)`, the same
+          pattern `Signal.set` already requires.
+
+          Use cases: playback of any RGBA frame stream a decoder or camera
+          produces -- this demo pushes one static synthetic frame (a
+          gradient, the same technique `Image`'s own sample asset uses)
+          since it has no real video source to decode.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - widget: Horizontal
+        children:
+          - name: video_demo
+            widget: Video
+            style: {width: 260, height: 160, corner_radius: 12}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

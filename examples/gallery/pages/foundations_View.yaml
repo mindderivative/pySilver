@@ -1,0 +1,225 @@
+# Foundations: the small building blocks every other page assembles from --
+# cards and tonal colour, buttons, selection controls, and progress feedback.
+#
+# `name:` lives here, not at the source: call site (see home_View.yaml's
+# comment on why) -- this file's own names stay exactly as written.
+name: foundations
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style: {width: expand, spacing: 28, padding: 24}
+    children:
+      - widget: Text
+        text: "Foundations"
+        style: {text_style: headline-small, color: primary}
+      - widget: Text
+        text: "The smallest pieces: surfaces and tonal colour, the button family, the controls a user selects or toggles, and the indicators that show something is happening. Almost every other page's widgets are built from the same M3 colour tokens, shape scale, and state layers shown here."
+        style: {color: on_surface_variant, font_size: 15}
+
+      # ============================================================
+      # Overview: elevated card, tonal swatches, icons, a stack
+      # ============================================================
+      - widget: Text
+        text: "Surfaces, colour, and icons"
+        style: {text_style: title-medium, color: primary}
+      - widget: Text
+        text: "Card is a styled box with M3's elevated/filled/outlined variants. The five swatches below are literal M3 colour-role tokens -- primary, secondary, tertiary, error, and a surface container -- not hex values pySilver invented; the whole palette derives from one seed colour. Icon renders Material Symbols glyphs with live FILL (0-1) and weight (100-700) axes, which is how M3 expresses a selected versus unselected state on the same glyph rather than swapping icon names."
+        style: {color: on_surface, font_size: 15}
+      - {name: surfaces_div, widget: Divider, style: {width: expand}}
+      - name: card
+        source: ../parts/info_card_View.yaml
+        with:
+          body: "Shaped text with real kerning and ligatures: fi fl ffi. Shared pieces live in parts/ and are pulled in with source:."
+
+      - name: cards
+        widget: Horizontal
+        style: {height: 56, spacing: 10, width: expand}
+        children:
+          - {name: card_e, widget: Card, style: {width: 150, variant: elevated}}
+          - {name: card_f, widget: Card, style: {width: 150, variant: filled}}
+          - {name: card_o, widget: Card, style: {width: 150, variant: outlined}}
+
+      - name: swatches
+        widget: Horizontal
+        style: {height: 56, spacing: 10, width: expand}
+        children:
+          - {name: sw_primary,   source: ../parts/swatch_View.yaml, with: {token: primary}}
+          - {name: sw_secondary, source: ../parts/swatch_View.yaml, with: {token: secondary}}
+          - {name: sw_tertiary,  source: ../parts/swatch_View.yaml, with: {token: tertiary}}
+          - {name: sw_error,     source: ../parts/swatch_View.yaml, with: {token: error}}
+          - {name: sw_surface,   source: ../parts/swatch_View.yaml, with: {token: surface_container_highest}}
+
+      - name: icons
+        widget: Horizontal
+        style: {height: 40, spacing: 14, width: expand, cross_alignment: center}
+        children:
+          - {name: ic_home,   widget: Icon, icon: home,     style: {color: on_surface, icon_size: 24}}
+          - {name: ic_search, widget: Icon, icon: search,   style: {color: on_surface, icon_size: 24}}
+          - {name: ic_set,    widget: Icon, icon: settings, style: {color: on_surface_variant, icon_size: 24}}
+          - name: ic_fav
+            widget: Icon
+            icon: "{{ 'favorite' if clicks.get() else 'favorite_border' }}"
+            style: {color: error, icon_size: 28, icon_fill: 1.0}
+          - {name: ic_heavy,  widget: Icon, icon: bolt, style: {color: tertiary, icon_size: 24, icon_weight: 700}}
+          - {name: ic_gap,    widget: Spacer, style: {width: expand}}
+          - {name: ic_check,  widget: Icon, icon: check_circle, style: {color: primary, icon_size: 24, icon_fill: 1.0}}
+
+      - name: stacked
+        widget: Stack
+        style: {height: 64, align_x: 1.0, align_y: 0.0}
+        children:
+          - name: stack_base
+            widget: Container
+            style: {width: expand, height: 64, background: surface_container, corner_radius: 12}
+          - name: stack_badge
+            widget: Container
+            style: {width: 28, height: 28, background: error, corner_radius: 14}
+
+      # ============================================================
+      # Buttons and links
+      # ============================================================
+      - name: buttons_head
+        widget: Text
+        text: "Buttons and links"
+        style: {text_style: title-medium, color: primary}
+      - widget: Text
+        text: "M3's five button styles carry one action's worth of emphasis apiece -- Filled for the single most important action on a screen, Tonal and Outlined for secondary ones, Text for the least emphasis, Elevated when a button needs to stand off a busy background. IconButton and Fab are the icon-only shapes: a Fab is for a screen's one primary action, an IconButton for a repeated, low-emphasis one (favourite, share) inside a toolbar or a list row."
+        style: {color: on_surface, font_size: 15}
+      - {name: buttons_div, widget: Divider, style: {width: expand}}
+      - name: buttons_row
+        widget: Horizontal
+        style: {height: 40, spacing: 10, width: expand, cross_alignment: center}
+        children:
+          - {name: btn_filled,  widget: Button, text: "Filled",       style: {height: 40, variant: filled}}
+          - {name: btn_tonal,   widget: Button, text: "Tonal",        style: {height: 40, variant: filled_tonal}}
+          - {name: btn_outline, widget: Button, text: "Outlined",     style: {height: 40, variant: outlined}}
+          - {name: btn_text,    widget: Button, text: "Text",         style: {height: 40, variant: text}}
+          - {name: btn_elev,    widget: Button, text: "Elevated",     style: {height: 40, variant: elevated}}
+          - {name: gallery_link, widget: Link, text: "Documentation", style: {font_size: 16}}
+
+      - name: fabs
+        widget: Horizontal
+        style: {height: 56, spacing: 12, width: expand, cross_alignment: center}
+        children:
+          - {name: ib_std,   widget: IconButton, icon: favorite, style: {variant: standard}}
+          - {name: ib_fill,  widget: IconButton, icon: star,     style: {variant: filled}}
+          - {name: ib_tonal, widget: IconButton, icon: share,    style: {variant: filled_tonal}}
+          - {name: ib_out,   widget: IconButton, icon: settings, style: {variant: outlined}}
+          - {name: fab_gap,  widget: Spacer, style: {width: expand}}
+          - {name: fab_sm,   widget: Fab, icon: add,  style: {variant: small}}
+          - {name: fab_std,  widget: Fab, icon: edit, style: {variant: standard}}
+
+      # ============================================================
+      # Selection controls
+      # ============================================================
+      - name: selection_head
+        widget: Text
+        text: "Selection controls"
+        style: {text_style: title-medium, color: primary}
+      - widget: Text
+        text: "Checkbox, Radio, and Switch are the three binary/multi-choice controls M3 defines, distinguished by how many can be true at once and how immediately the choice takes effect (a Switch acts right away; a Checkbox commonly waits for a form submit). Chip and Badge are compact, inline signals -- a filter or assist action, or a small count -- rather than full controls. SegmentedButton groups a small, mutually exclusive set of choices into one control, for when Radio buttons would take more room than the choice deserves."
+        style: {color: on_surface, font_size: 15}
+      - {name: selection_div, widget: Divider, style: {width: expand}}
+      - name: controls
+        widget: Horizontal
+        style: {height: 40, spacing: 16, width: expand, cross_alignment: center}
+        children:
+          # cb_on asks for M3's 48dp minimum target. It is still drawn at
+          # 18dp -- the hit rect grows, layout and paint do not -- so this
+          # row looks identical to one without it and is simply easier to
+          # click.
+          - {name: cb_on,  widget: Checkbox, value: "{{ clicks.get() }}", style: {min_hit_size: 48}}
+          - {name: cb_off, widget: Checkbox, value: "false"}
+          - {name: rd_on,  widget: Radio,    value: "true"}
+          - {name: rd_off, widget: Radio,    value: "false"}
+          - {name: sw,     widget: Switch,   value: "{{ dark.get() }}"}
+          - {name: chip_f, widget: Chip, text: "Filter", style: {variant: filter}, value: "{{ clicks.get() }}"}
+          - {name: chip_a, widget: Chip, text: "Assist", style: {variant: assist}}
+          - {name: ctl_gap, widget: Spacer, style: {width: expand}}
+          - {name: badge,  widget: Badge, value: "{{ clicks.get() }}"}
+
+      - name: segmented
+        widget: SegmentedButton
+        value: "{{ segment.get() }}"
+        style: {height: 40, width: 300}
+        children:
+          - {name: s0, widget: Segment, text: "Day",   handlers: {on_click: select_segment}}
+          - {name: s1, widget: Segment, text: "Week",  handlers: {on_click: select_segment}}
+          - {name: s2, widget: Segment, text: "Month", handlers: {on_click: select_segment}}
+
+      # ============================================================
+      # Progress indicators
+      # ============================================================
+      - name: progress_head
+        widget: Text
+        text: "Progress indicators"
+        style: {text_style: title-medium, color: primary}
+      - widget: Text
+        text: "LinearProgress and CircularProgress both take an optional value: for a determinate 0-1 fraction, or none at all for an indeterminate, indefinitely animating state -- use determinate whenever a real fraction is known, since it tells the user how much is actually left. SpinBox and Pagination are numeric selection, not progress, but share the same 'a value the user steps through' shape: SpinBox for a small bounded number, Pagination for jumping between a known number of pages."
+        style: {color: on_surface, font_size: 15}
+      - {name: progress_div, widget: Divider, style: {width: expand}}
+      - name: linear_progress_row
+        widget: Vertical
+        style: {spacing: 10, width: expand}
+        children:
+          - {name: lp_determinate,   widget: LinearProgress, value: "0.65", style: {width: expand}}
+          - {name: lp_indeterminate, widget: LinearProgress, style: {width: expand}}
+      - name: circular_progress_row
+        widget: Horizontal
+        style: {height: 48, spacing: 24, width: expand, cross_alignment: center}
+        children:
+          - {name: cp_determinate,   widget: CircularProgress, value: "0.4"}
+          - {name: cp_indeterminate, widget: CircularProgress}
+          - {name: sb_demo, widget: SpinBox, value: "{{ spin_value.get() }}", style: {min: 0, max: 10, step: 1}, handlers: {on_change: change_spin}}
+          - {name: pg_demo, widget: Pagination, value: "{{ page.get() }}", style: {count: 8}, handlers: {on_change: change_page}}
+
+      # ============================================================
+      # Actions: the running click counter and the two dialogs
+      # ============================================================
+      - name: actions_head
+        widget: Text
+        text: "Live state"
+        style: {text_style: title-medium, color: primary}
+      - widget: Text
+        text: "A small end-to-end example: two buttons write to the same Signal a handful of widgets above already read from -- the favourite icon's fill, the checkbox and chip's checked state, and the badge's count all update from one click, with no widget-to-widget wiring."
+        style: {color: on_surface, font_size: 15}
+      - {name: actions_div, widget: Divider, style: {width: expand}}
+      - name: actions
+        widget: Horizontal
+        style: {height: 44, spacing: 12, width: expand}
+        children:
+          - name: count_label
+            widget: Text
+            text: "Clicked {{ clicks.get() }}x"
+            style: {color: on_surface_variant, font_size: 14}
+          - name: actions_gap
+            widget: Spacer
+            style: {width: expand}
+          - name: reset_btn
+            widget: Button
+            classes: action          # size and variant come from theme.yaml
+            text: "Reset"
+            handlers: {on_click: reset}
+          - name: confirm_btn
+            widget: Button
+            classes: action primary  # ...and the primary rule widens it
+            text: "Confirm"
+            handlers: {on_click: confirm}
+
+      - widget: Text
+        text: "Wiring it up in Python"
+        style: {text_style: title-medium, color: primary}
+      - widget: CodeEditor
+        value: |
+          class Gallery(ViewModel):
+              def __init__(self) -> None:
+                  self.clicks = Signal(0, name="clicks")
+
+              # Bound from the view as handlers: {on_click: confirm}
+              def confirm(self, event: Any) -> None:
+                  self.clicks.update(lambda n: n + 1)
+
+              def reset(self, event: Any) -> None:
+                  self.clicks.set(0)
+        style: {height: 170, width: expand, language: python, read_only: true}

@@ -1,0 +1,83 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Accordion"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "Not an M3 component: an in-place expand/collapse disclosure, built from Lists' own documented behaviour."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          M3 states the behaviour without naming a widget for it: "List
+          items containing other list items can expand and collapse in a
+          folder-like manner, to reveal or hide content." Anatomy is
+          `ListItem`'s (56dp header) plus a trailing
+          `expand_more`/`expand_less` chevron. Expand state follows the
+          same `value:` convention a filter `Chip` already uses --
+          `self.checked` reads it, and clicking fires `on_click:` for the
+          application to flip its own bound signal.
+
+          Use cases: grouping detail behind a collapsed header when a
+          page has more content than fits comfortably at once -- FAQ
+          entries, settings sections, or any list where most items stay
+          closed most of the time.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Vertical
+        style: {width: expand, background: surface_container_low, corner_radius: 12}
+        children:
+          - name: panel
+            widget: Accordion
+            text: "Shipping details"
+            value: "{{ open.get() }}"
+            handlers: {on_click: toggle}
+            children:
+              - widget: Vertical
+                style: {padding: 16}
+                children:
+                  - {widget: Text, text: "Orders ship within two business days.", style: {color: on_surface_variant}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

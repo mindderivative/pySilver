@@ -1,0 +1,77 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Date Picker"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "M3's modal date picker: a calendar month grid for choosing a single date."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          320dp wide (pySilver's own reasonable choice -- the modal size
+          table in the spec is images, not text), 40dp day cells, computed
+          with the standard library's `calendar` module rather than by
+          hand. A plain widget, not a second overlay type: M3 calls this
+          "modal", but the modality is `Dialog`'s own job, so a real app
+          places this as a `Dialog`'s child rather than teaching the
+          overlay host a new shape. Clicking a day commits `value:`
+          immediately and fires `on_change` -- no separate OK/Cancel step,
+          a stated simplification.
+
+          Use cases, from the spec: date pickers let people select a date
+          or range of dates. They can be embedded into dialogs on compact
+          breakpoints like mobile, or into a text field.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Horizontal
+        style: {spacing: 16}
+        children:
+          - {name: picker, widget: DatePicker, value: "{{ selected.get() }}", handlers: {on_change: change_date}}
+          - widget: Text
+            text: "Selected: {{ selected.get() }}"
+            style: {color: on_surface_variant}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

@@ -1,0 +1,79 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Tree Item"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "One node of a TreeView: a branch if it has children, a leaf otherwise -- with no chevron and nothing to expand."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          M3 gives trees nothing of their own, so anatomy is `ListItem`'s
+          -- the same way `Accordion`'s is -- and expand state, the
+          chevron swap, and the height-animation-plus-clip reveal are
+          `Accordion`'s own mechanism reused verbatim; a tree node is an
+          accordion that can nest. Two things are new because recursion
+          makes them unavoidable: each level indents by one chevron-width,
+          and a node's own `value:` (`"true"`/`"false"`) is its
+          expanded state, independent of the tree's shared selection
+          `value:`.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example -- click src to collapse it"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: TreeView
+        value: "{{ selected.get() }}"
+        style: {width: expand}
+        children:
+          - name: src
+            widget: TreeItem
+            text: "src"
+            value: "{{ src_expanded.get() }}"
+            handlers: {on_click: toggle_src}
+            children:
+              - {name: main, widget: TreeItem, text: "main.py", handlers: {on_click: select}}
+              - {name: widgets_dir, widget: TreeItem, text: "widgets/", handlers: {on_click: select}}
+          - {name: readme, widget: TreeItem, text: "README.md", handlers: {on_click: select}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

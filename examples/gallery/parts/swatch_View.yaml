@@ -1,0 +1,5 @@
+# One tonal swatch. Included three times by the gallery.
+params: [token]
+name: swatch
+widget: Container
+style: {width: 56, height: 56, background: "{{ token }}", corner_radius: 12}

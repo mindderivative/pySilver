@@ -1,0 +1,96 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Top App Bar"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "M3's top app bar: content and actions for the current page, in three heights that collapse as the page scrolls."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          64dp small/center-aligned, 112dp medium, 152dp large. A medium or
+          large bar collapses into a small one as its page scrolls -- "when
+          scrolled, medium and large app bars can transform into small app
+          bars; they should remain small until the page is scrolled back to
+          the top". This is scroll-linked, not timed: there is no animation
+          clock, the height is a direct function of the scroll offset, wired
+          here with `style: {collapses_with: body}` naming the ScrollView
+          below.
+
+          Use cases, from the spec: use an app bar to provide content and
+          actions related to the current page, such as page navigation
+          actions, headlines, images, and one or two essential actions. App
+          bars should have only one action, two if necessary -- the primary
+          action should alter or exit the entire page, like Send, Save, or
+          Edit.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example -- scroll the list to collapse the bar"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Vertical
+        style: {height: 360, width: expand, background: surface_container_low, corner_radius: 12}
+        children:
+          - name: bar
+            widget: TopAppBar
+            text: "Inbox"
+            style: {variant: large, collapses_with: body}
+          - name: body
+            widget: ScrollView
+            style: {height: expand}
+            children:
+              - widget: Vertical
+                style: {padding: 16, spacing: 12}
+                children:
+                  - {widget: Text, text: "Message 1 -- Weekly standup notes", style: {color: on_surface}}
+                  - {widget: Text, text: "Message 2 -- Invoice #4021 is ready", style: {color: on_surface}}
+                  - {widget: Text, text: "Message 3 -- Your flight is confirmed", style: {color: on_surface}}
+                  - {widget: Text, text: "Message 4 -- Project kickoff notes", style: {color: on_surface}}
+                  - {widget: Text, text: "Message 5 -- Reminder: renew the domain", style: {color: on_surface}}
+                  - {widget: Text, text: "Message 6 -- Photos from last weekend", style: {color: on_surface}}
+                  - {widget: Text, text: "Message 7 -- Quarterly report attached", style: {color: on_surface}}
+                  - {widget: Text, text: "Message 8 -- Your package has shipped", style: {color: on_surface}}
+                  - {widget: Text, text: "Message 9 -- Team lunch on Friday", style: {color: on_surface}}
+                  - {widget: Text, text: "Message 10 -- Newsletter: this month in M3", style: {color: on_surface}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

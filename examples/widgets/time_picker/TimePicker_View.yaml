@@ -1,0 +1,77 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Time Picker"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "M3's time picker, Input variant: hour/minute steppers plus an AM/PM toggle."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          Two 96x72dp hour/minute fields (M3's own quoted Input figures)
+          plus a 52dp AM/PM toggle. Stepping, not typing: click the top
+          half of a field to increment, the bottom half to decrement, both
+          wrapping -- the same trade `SpinBox` already makes, since real
+          digit entry needs `TextField`'s whole caret/selection machinery.
+          Hour and minute step independently, like two separate `SpinBox`
+          fields, so decrementing past 12 o'clock does not flip AM/PM on
+          its own. `value:` is a 24-hour `HH:MM` string; any click commits
+          it and fires `on_change` immediately.
+
+          Use cases, from the spec: input time pickers allow people to set
+          a time using a keyboard -- the accessible alternative to the
+          Dial variant's drag gesture.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Horizontal
+        style: {spacing: 16}
+        children:
+          - {name: picker, widget: TimePicker, value: "{{ selected.get() }}", handlers: {on_change: change_time}}
+          - widget: Text
+            text: "Selected: {{ selected.get() }}"
+            style: {color: on_surface_variant}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

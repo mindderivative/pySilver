@@ -1,0 +1,84 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Search Bar"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "M3's search bar: a 56dp pill with a fixed leading icon, always single-line."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          56dp height, 16dp leading/trailing padding, a full-pill 28dp
+          radius. Built on the same editing model `TextField` and
+          `CodeEditor` share, rather than by subclassing `TextField` --
+          it never floats a label and is always single-line, different
+          enough anatomy that subclassing would mean overriding nearly
+          every method. `value:` is the typed query; `supporting_text:`
+          is a placeholder shown only while empty. The expanded "Search
+          View" results list is deliberately not a second widget kind --
+          it composes from the existing `Menu` overlay, anchored to this
+          widget's own name, the same shape a `MenuItem` submenu already
+          uses.
+
+          Use cases: a search bar is the entry point for finding content
+          across an app -- typically docked at the top of a screen, with
+          results appearing below it as the query changes.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Vertical
+        style: {spacing: 8, width: expand}
+        children:
+          - name: search
+            widget: SearchBar
+            value: "{{ query.get() }}"
+            supporting_text: "Search widgets"
+            style: {width: expand}
+            handlers: {on_change: change_query}
+          - widget: Text
+            text: "Query: {{ query.get() }}"
+            style: {color: on_surface_variant}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

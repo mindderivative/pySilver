@@ -1,0 +1,93 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Dock Group"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "Not an M3 component: a tabbed stack of DockPanels, exactly one visible at a time."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          Checked directly against M3, which has nothing for this.
+          `value:` names the visible panel by `name`; clicking a tab
+          switches it and fires `on_change` the same way every other
+          value-bearing widget in this catalogue does the switch itself
+          and tells the application afterward. A single `DockPanel` in a
+          group reads as an untabbed pane; more than one is what makes
+          the tab strip appear. This page is genuinely clickable, not a
+          static picture -- click a tab below to bring it forward.
+
+          Use cases: grouping related panes under one tab strip inside a
+          larger dock layout -- an editor's open files, a set of related
+          tool windows.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example -- click a tab to switch panels"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: DockGroup
+        value: "{{ active.get() }}"
+        style: {height: 160, width: expand}
+        handlers: {on_change: select_panel}
+        children:
+          - name: files
+            widget: DockPanel
+            text: "Files"
+            children:
+              - {widget: Text, text: "src/\n  main.py\n  widgets/", style: {color: on_surface_variant}}
+          - name: search
+            widget: DockPanel
+            text: "Search"
+            children:
+              - {widget: Text, text: "No results yet.", style: {color: on_surface_variant}}
+          - name: git
+            widget: DockPanel
+            text: "Git"
+            children:
+              - {widget: Text, text: "3 changed files.", style: {color: on_surface_variant}}
+
+      - widget: Text
+        text: "Active panel: {{ active.get() }}"
+        style: {color: on_surface_variant}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

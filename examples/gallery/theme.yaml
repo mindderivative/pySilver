@@ -1,0 +1,18 @@
+# A shared stylesheet: a bare list of rules, importable with `- source:`.
+#
+# Nothing here names a node. Rules select on the `classes:` a node carries,
+# which is what lets one file restyle a whole application.
+#
+# Note what is deliberately absent: a baseline `corner_radius`. A rule matching
+# everything would override each component's own M3 shape -- a Button is a pill
+# at half its height, a Card is 12dp -- and flatten the catalogue to one radius.
+# A stylesheet is for the choices an application makes, not for overwriting the
+# design system underneath it.
+
+# Every action button is the same size, stated once instead of at each call.
+- classes: action
+  style: {width: 100, height: 40, variant: outlined}
+
+# ...and the primary one among them is filled and wider.
+- classes: action primary
+  style: {width: 130, variant: filled}

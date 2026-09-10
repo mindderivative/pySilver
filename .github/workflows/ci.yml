@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: lint + types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: mypy
+
+  test:
+    name: py${{ matrix.python }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.12", "3.13", "3.14"]
+        exclude:
+          # bittty (the Terminal backend) pulls pywinpty on Windows, whose
+          # Rust extension needs PyO3 -- which doesn't support 3.14 yet
+          # upstream. Not a pySilver bug; drop this one cell until it does.
+          - os: windows-latest
+            python: "3.14"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e ".[dev]"
+      # No GPU adapter on hosted runners: proves the framework's logic is
+      # genuinely GPU-free (ARCHITECTURE.md 11).
+      - run: pytest -m "not gpu" --cov=pysilver --cov-report=term-missing
+
+  golden:
+    name: golden images (lavapipe)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      # Software Vulkan: deterministic rasterisation, identical every run.
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y mesa-vulkan-drivers libvulkan1 vulkan-tools
+      - run: pip install -e ".[dev]"
+      - env:
+          WGPU_FORCE_ADAPTER: cpu
+          LIBGL_ALWAYS_SOFTWARE: "1"
+        run: pytest -m gpu -v
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: golden-failures
+          path: tests/golden/failures/

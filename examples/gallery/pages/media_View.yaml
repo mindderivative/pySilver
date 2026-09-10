@@ -1,0 +1,132 @@
+# Layout & media: arranging screen real estate, drawing freeform content,
+# and displaying decoded or pushed pixels.
+#
+# `name:` lives here, not at the source: call site (see home_View.yaml's
+# comment on why) -- this file's own names stay exactly as written.
+name: media
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style: {width: expand, spacing: 28, padding: 24}
+    children:
+      - widget: Text
+        text: "Layout & media"
+        style: {text_style: headline-small, color: primary}
+      - widget: Text
+        text: "A browsable strip of items, a resizable IDE-style panel layout, freeform drawing, and the two ways pixels get onto the screen without going through the widget tree's own paint primitives."
+        style: {color: on_surface_variant, font_size: 15}
+
+      # ============================================================
+      # Carousel
+      # ============================================================
+      - widget: Text
+        text: "Carousel"
+        style: {text_style: title-medium, color: primary}
+      - widget: Text
+        text: "A horizontally browsable strip of items -- multi_browse shows several at once with the leading and trailing items cropped, signalling there is more to scroll to."
+        style: {color: on_surface, font_size: 15}
+      - {name: carousel_div, widget: Divider, style: {width: expand}}
+      - name: carousel_demo
+        widget: Carousel
+        style: {variant: multi_browse, height: 140, width: expand}
+        children:
+          - {name: cr0, widget: CarouselItem, text: "Item 1"}
+          - {name: cr1, widget: CarouselItem, text: "Item 2"}
+          - {name: cr2, widget: CarouselItem, text: "Item 3"}
+          - {name: cr3, widget: CarouselItem, text: "Item 4"}
+          - {name: cr4, widget: CarouselItem, text: "Item 5"}
+
+      # ============================================================
+      # Dock layout
+      # ============================================================
+      - widget: Text
+        text: "Dock layout"
+        style: {text_style: title-medium, color: primary}
+      - widget: Text
+        text: "No M3 component covers this at all -- it is pySilver's own answer for an IDE-style workspace. DockSplit divides space between DockGroups, each a tabbed stack of DockPanels; the split itself is draggable to resize."
+        style: {color: on_surface, font_size: 15}
+      - {name: dock_div, widget: Divider, style: {width: expand}}
+      - name: dock_demo
+        widget: DockSplit
+        style: {height: 220, width: expand}
+        children:
+          - name: dock_sidebar
+            widget: DockGroup
+            style: {width: 160}
+            children:
+              - name: dock_files
+                widget: DockPanel
+                text: "Files"
+                children:
+                  - {name: dock_files_body, widget: Text, text: "src/\n  main.py\n  widgets/", style: {color: on_surface_variant}}
+          - name: dock_main
+            widget: DockGroup
+            style: {width: expand}
+            children:
+              - name: dock_editor
+                widget: DockPanel
+                text: "Editor"
+                children:
+                  - {name: dock_editor_body, widget: Text, text: "def hello():\n    print('hi')", style: {color: on_surface}}
+              - name: dock_output
+                widget: DockPanel
+                text: "Output"
+                children:
+                  - {name: dock_output_body, widget: Text, text: "> hello\nhi", style: {color: on_surface_variant}}
+
+      # ============================================================
+      # Canvas
+      # ============================================================
+      - widget: Text
+        text: "Canvas"
+        style: {text_style: title-medium, color: primary}
+      - widget: Text
+        text: "A freeform drawing surface for an on_paint handler -- also no M3 component, since M3 describes finished components, not a blank surface an application draws on itself. Every primitive (rect, line, circle, arc, polygon, text) goes through the same instanced pipeline every other widget uses, so it stays in the one draw call."
+        style: {color: on_surface, font_size: 15}
+      - {name: canvas_div, widget: Divider, style: {width: expand}}
+      - name: canvas_demo
+        widget: Canvas
+        style: {height: 200, width: expand}
+        handlers: {on_paint: draw_canvas}
+
+      # ============================================================
+      # Image and video
+      # ============================================================
+      - widget: Text
+        text: "Image and video"
+        style: {text_style: title-medium, color: primary}
+      - widget: Text
+        text: "Image decodes a file path once, at load; Video has no file at all -- an application pushes RGBA frames to it directly with push_frame, which is how a live camera feed or a decoded video stream would actually reach the screen. Neither has an M3 component of its own; M3 describes chrome around content, not the content itself."
+        style: {color: on_surface, font_size: 15}
+      - {name: media_div, widget: Divider, style: {width: expand}}
+      - name: media_row
+        widget: Horizontal
+        style: {height: 160, spacing: 16, width: expand}
+        children:
+          - name: image_demo
+            widget: Image
+            path: "{{ image_path }}"
+            style: {width: 260, height: 160, fit: cover, corner_radius: 12}
+          - name: video_demo
+            widget: Video
+            style: {width: 260, height: 160, fit: cover, corner_radius: 12}
+
+      - widget: Text
+        text: "Wiring it up in Python"
+        style: {text_style: title-medium, color: primary}
+      - widget: CodeEditor
+        value: |
+          class Gallery(ViewModel):
+              def draw_canvas(self, canvas: Any) -> None:
+                  # on_paint hands the handler a CanvasContext directly --
+                  # no Event wraps it, since nothing else could be done
+                  # with one.
+                  canvas.rect(12, 12, 120, 60, color="primary_container", corner_radius=12)
+                  canvas.line(150, 20, 260, 64, thickness=3, color="secondary")
+                  canvas.circle(300, 42, 26, color="tertiary")
+
+          # A live source (camera, decoder) calls this repeatedly; the
+          # gallery pushes one synthetic frame at startup.
+          video_element.push_frame(rgba_array)
+        style: {height: 210, width: expand, language: python, read_only: true}

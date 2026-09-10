@@ -1,0 +1,133 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Tabs"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "M3's tabs: 48dp high, a 3dp active indicator, for switching between related content at the same level of hierarchy."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          48dp tall, or 64dp when any tab carries an `icon:` -- every tab in
+          one bar shares the taller height, even an icon-less sibling.
+          Primary tabs anchor the indicator to the bottom edge with rounded
+          top corners; secondary tabs use a flat, full-width stroke.
+          `value:` on the container names the selected tab by id -- the same
+          "one shared value, one click handler that writes the clicked
+          child's name back into it" convention every selection container in
+          pySilver uses.
+
+          Use cases, from the spec: tabs organize groups of related content
+          that are at the same level of hierarchy. Tab labels can include
+          icons and text -- stacked above the label by default (M3's own
+          diagram), or beside it via the opt-in `style.icon_position:
+          leading`/`trailing`. Text labels should be short.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Vertical
+        style: {spacing: 16, width: expand}
+        children:
+          - {widget: Text, text: "Primary", style: {color: on_surface_variant}}
+          - name: tabs_primary
+            widget: Tabs
+            value: "{{ tab.get() }}"
+            style: {width: expand}
+            children:
+              - {name: t0, widget: Tab, text: "Video", handlers: {on_click: select_tab}}
+              - {name: t1, widget: Tab, text: "Photos", handlers: {on_click: select_tab}}
+              - {name: t2, widget: Tab, text: "Audio", handlers: {on_click: select_tab}}
+          - {widget: Text, text: "Secondary", style: {color: on_surface_variant}}
+          - name: tabs_secondary
+            widget: Tabs
+            value: "{{ tab2.get() }}"
+            style: {width: expand, variant: secondary}
+            children:
+              - {name: s0, widget: Tab, text: "Overview", handlers: {on_click: select_tab2}}
+              - {name: s1, widget: Tab, text: "Specs", handlers: {on_click: select_tab2}}
+              - {name: s2, widget: Tab, text: "Reviews", handlers: {on_click: select_tab2}}
+          - {widget: Text, text: "With icons -- stacked (default), grows to 64dp", style: {color: on_surface_variant}}
+          - name: tabs_icon
+            widget: Tabs
+            value: "{{ tab3.get() }}"
+            style: {width: expand}
+            children:
+              - {name: i0, widget: Tab, text: "Video", icon: videocam, handlers: {on_click: select_tab3}}
+              - {name: i1, widget: Tab, text: "Photos", icon: photo_camera, handlers: {on_click: select_tab3}}
+              - {name: i2, widget: Tab, text: "Audio", icon: music_note, handlers: {on_click: select_tab3}}
+          - {widget: Text, text: "icon_position: leading -- opt-in, beside the label", style: {color: on_surface_variant}}
+          - name: tabs_icon_leading
+            widget: Tabs
+            value: "{{ tab4.get() }}"
+            style: {width: expand}
+            children:
+              - {name: l0, widget: Tab, text: "Video", icon: videocam, style: {icon_position: leading}, handlers: {on_click: select_tab4}}
+              - {name: l1, widget: Tab, text: "Photos", icon: photo_camera, style: {icon_position: leading}, handlers: {on_click: select_tab4}}
+              - {name: l2, widget: Tab, text: "Audio", icon: music_note, style: {icon_position: leading}, handlers: {on_click: select_tab4}}
+          - {widget: Text, text: "icon_position: trailing", style: {color: on_surface_variant}}
+          - name: tabs_icon_trailing
+            widget: Tabs
+            value: "{{ tab5.get() }}"
+            style: {width: expand}
+            children:
+              - {name: r0, widget: Tab, text: "Video", icon: videocam, style: {icon_position: trailing}, handlers: {on_click: select_tab5}}
+              - {name: r1, widget: Tab, text: "Photos", icon: photo_camera, style: {icon_position: trailing}, handlers: {on_click: select_tab5}}
+              - {name: r2, widget: Tab, text: "Audio", icon: music_note, style: {icon_position: trailing}, handlers: {on_click: select_tab5}}
+          - {widget: Text, text: "With badge: -- overlaps a stacked icon's corner (no width change), or trails a label-only/inline tab with a 4dp gap (widens it)", style: {color: on_surface_variant}}
+          - name: tabs_badge
+            widget: Tabs
+            value: "{{ tab6.get() }}"
+            style: {width: expand}
+            children:
+              - {name: b0, widget: Tab, text: "Inbox", icon: mail, badge: "{{ inbox_count.get() }}", handlers: {on_click: select_tab6}}
+              - {name: b1, widget: Tab, text: "Updates", badge: "12", handlers: {on_click: select_tab6}}
+              - name: b2
+                widget: Tab
+                text: "Alerts"
+                icon: notifications
+                style: {icon_position: leading, badge_variant: dot}
+                handlers: {on_click: select_tab6}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}

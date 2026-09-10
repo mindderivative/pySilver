@@ -1,0 +1,92 @@
+root:
+  name: root
+  widget: ScrollView
+  style: {width: expand, height: expand}
+  children:
+    - widget: Vertical
+      style:
+        background: surface
+        padding: 32
+        spacing: 20
+        width: expand
+        cross_alignment: stretch
+      children:
+        - name: title
+          widget: Text
+          text: "Split Button"
+          style: {text_style: headline-small, color: on_surface}
+
+        - name: summary
+          widget: Text
+          text: "M3's split button: a primary action with an attached menu trigger, size M."
+          style: {text_style: body-large, color: on_surface_variant}
+
+        - {name: div1, widget: Divider, style: {width: expand}}
+
+        - name: explanation
+          widget: Text
+          text: |
+            The two buttons sit 2dp apart; the touching corners square to
+            4dp while every outer corner stays fully rounded, so the pair
+            still reads as one pill split in two. Routing uses two
+            independent handlers -- `on_leading_click` and
+            `on_trailing_click` -- deliberately not `on_click:`, since a
+            widget's own native `on_click` method and a view's `on_click:`
+            handler both fire for the same click; routing instead happens
+            entirely from press/release so exactly one handler fires per
+            click, for the region actually clicked.
+
+            Use cases, from the spec: split buttons add a menu of actions
+            alongside a main action, reducing visual complexity by hiding
+            extra options. They work well alone or alongside common
+            buttons.
+          style: {text_style: body-medium, color: on_surface_variant}
+
+        - {name: div2, widget: Divider, style: {width: expand}}
+
+        - name: live_heading
+          widget: Text
+          text: "Live example"
+          style: {text_style: title-medium, color: primary}
+
+        - name: live_demo
+          widget: Horizontal
+          style: {spacing: 16}
+          children:
+            - name: split
+              widget: SplitButton
+              text: "Save"
+              handlers: {on_leading_click: save, on_trailing_click: open_menu}
+            - widget: Text
+              text: "Saved {{ saves.get() }} times"
+              style: {color: on_surface_variant}
+
+        - {name: div3, widget: Divider, style: {width: expand}}
+
+        - name: code_heading
+          widget: Text
+          text: "Source"
+          style: {text_style: title-medium, color: primary}
+
+        - name: code_panels
+          widget: Horizontal
+          style: {spacing: 16, width: expand, height: 260}
+          children:
+            - name: yaml_source
+              widget: CodeEditor
+              value: "{{ view_source }}"
+              style: {width: expand, height: expand, language: yaml, read_only: true}
+            - name: python_source
+              widget: CodeEditor
+              value: "{{ viewmodel_source }}"
+              style: {width: expand, height: expand, language: python, read_only: true}
+
+overlays:
+  - name: menu
+    widget: Menu
+    open: "{{ menu_open.get() }}"
+    style: {anchor: split}
+    handlers: {on_dismiss: close_menu}
+    children:
+      - {name: save_as, widget: MenuItem, text: "Save as...", handlers: {on_click: close_menu}}
+      - {name: save_copy, widget: MenuItem, text: "Save a copy", handlers: {on_click: close_menu}}

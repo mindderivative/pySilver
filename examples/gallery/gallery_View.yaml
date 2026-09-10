@@ -1,0 +1,167 @@
+# pySilver widget gallery: a real navigation shell.
+#
+# `root` is a fixed header above a body Horizontal: a collapsible navigation
+# rail on the left, `PageHost` on the right showing exactly one page at a
+# time. Each page is its own file under pages/, each wrapped in its own
+# ScrollView -- content is grouped by what it's for, not crammed into one
+# long scroll the way earlier revisions of this gallery were.
+#
+# M3 Expressive treats "collapsed" and "expanded" as two states of ONE
+# navigation control, not two separate widgets (COMPONENT_NAVIGATION_RAIL.md:
+# "the expanded nav rail is meant to replace the [modal] navigation
+# drawer"). `nav_rail` below is a single `NavigationRail`, `collapsed:`
+# bound to `nav_expanded` -- `style.width` is a load-time value, not
+# something a `{{ }}` binding can drive (confirmed by trying it), which is
+# why `collapsed:` (WidgetSpec, state rather than style) exists at all.
+styles:
+  - source: theme.yaml
+
+root:
+  name: root
+  widget: Vertical
+  style: {background: surface, width: expand, height: expand}
+
+  children:
+    - name: header
+      widget: Horizontal
+      style: {height: 40, width: expand, cross_alignment: center, padding: 20}
+      children:
+        - name: title
+          widget: Text
+          text: "pySilver gallery"
+          style: {color: on_surface, font_size: 22}
+
+    - name: body
+      widget: Horizontal
+      style: {width: expand, height: expand}
+      children:
+        - name: nav
+          widget: Vertical
+          style: {height: expand, background: surface_container_low}
+          children:
+            - name: nav_toggle
+              widget: IconButton
+              icon: "{{ 'menu_open' if nav_expanded.get() else 'menu' }}"
+              style: {variant: standard}
+              handlers: {on_click: toggle_nav}
+
+            - name: nav_rail
+              widget: NavigationRail
+              value: "{{ 'nav_' + current_page.get() }}"
+              collapsed: "{{ not nav_expanded.get() }}"
+              style: {height: expand}
+              children:
+                # `nav_`-prefixed: PageHost's own pages beneath already use
+                # these same bare names ("home", "foundations", ...), and a
+                # view file's names must all be unique -- one prefix now,
+                # not the old rail+drawer pair's `r_`/`d_` two. Short labels
+                # (the old rail's, not the old drawer's more descriptive
+                # ones) -- the same label now has to fit the narrow
+                # collapsed anatomy too, which the longer ones overflowed.
+                - {name: nav_home,        source: parts/nav_item_View.yaml, with: {icon: home,       label: Home}}
+                - {name: nav_foundations, source: parts/nav_item_View.yaml, with: {icon: widgets,     label: Foundations}}
+                - {name: nav_structure,   source: parts/nav_item_View.yaml, with: {icon: navigation,  label: Structure}}
+                - {name: nav_input,       source: parts/nav_item_View.yaml, with: {icon: keyboard,    label: Input}}
+                - {name: nav_media,       source: parts/nav_item_View.yaml, with: {icon: grid_view,   label: Media}}
+                - {name: nav_advanced,    source: parts/nav_item_View.yaml, with: {icon: code,        label: Advanced}}
+                - {name: nav_rail_spacer, widget: Spacer, style: {height: expand}}
+                - {name: nav_settings,    source: parts/nav_item_View.yaml, with: {icon: settings,    label: Settings}}
+
+        - name: content
+          widget: PageHost
+          value: "{{ current_page.get() }}"
+          default: home
+          style: {width: expand, height: expand}
+          children:
+            # No `name:` at any of these call sites, deliberately -- each
+            # page file supplies its own (see e.g. pages/home_View.yaml's own
+            # comment), which is what keeps every widget inside it unprefixed
+            # instead of namespaced under this call site's name.
+            - {source: pages/home_View.yaml}
+            - {source: pages/foundations_View.yaml}
+            - {source: pages/structure_View.yaml}
+            - {source: pages/input_View.yaml}
+            - {source: pages/media_View.yaml}
+            - {source: pages/advanced_View.yaml}
+            - {source: pages/settings_View.yaml}
+
+overlays:
+  # Two dialogs, one component, one property apart. The first closes when you
+  # click away from it; the second refuses to.
+  - name: confirm
+    source: parts/confirm_dialog_View.yaml
+    with:
+      title: "Delete this item?"
+      body: "This cannot be undone."
+  - name: locked
+    source: parts/locked_dialog_View.yaml
+    with:
+      title: "This one is locked"
+      body: "Clicking outside does nothing. Use the button."
+
+  # The rest are declared inline: a plain widget spec with `name:`/`open:`
+  # added, needing no separate view file or ViewModel since they only read
+  # and write this view's own Gallery signals. Anchored to buttons that now
+  # live on the Input & overlays page (pages/input_View.yaml) -- an overlay's
+  # `style.anchor` names an element anywhere in this same resolved document,
+  # so it works identically whether that page is currently active or not.
+  - name: popover_demo
+    widget: Popover
+    open: "{{ popover_open.get() }}"
+    text: "Rich tooltip"
+    supporting_text: "A Popover explains a control without a whole dialog."
+    style: {anchor: popover_btn}
+    handlers: {on_dismiss: close_popover}
+
+  - name: menu_demo
+    widget: Menu
+    open: "{{ menu_open.get() }}"
+    style: {anchor: menu_btn}
+    handlers: {on_dismiss: close_menu}
+    children:
+      - {name: menu_cut, widget: MenuItem, text: "Cut", supporting_text: "Ctrl+X", handlers: {on_click: close_menu}}
+      - {name: menu_copy, widget: MenuItem, text: "Copy", supporting_text: "Ctrl+C", handlers: {on_click: close_menu}}
+      - {name: menu_paste, widget: MenuItem, text: "Paste", supporting_text: "Ctrl+V", handlers: {on_click: close_menu}}
+
+  - name: tooltip_demo
+    widget: Tooltip
+    open: "{{ tooltip_open.get() }}"
+    text: "A plain tooltip"
+    style: {anchor: tooltip_btn}
+    handlers: {on_dismiss: close_tooltip}
+
+  - name: snackbar_demo
+    widget: Snackbar
+    open: "{{ snackbar_open.get() }}"
+    text: "Item archived"
+    supporting_text: "Undo"
+    handlers: {on_dismiss: close_snackbar, on_action: close_snackbar}
+
+  - name: bottom_sheet_demo
+    widget: BottomSheet
+    open: "{{ bottom_sheet_open.get() }}"
+    style: {handle: true}
+    handlers: {on_dismiss: close_bottom_sheet}
+    children:
+      - name: bottom_sheet_body
+        widget: Vertical
+        style: {padding: 16, spacing: 8, width: expand}
+        children:
+          - {name: bottom_sheet_title, widget: Text, text: "Bottom sheet", style: {font_size: 18, color: on_surface}}
+          - {name: bottom_sheet_body_text, widget: Text, text: "Slides up from the bottom edge, with an optional drag handle.", style: {color: on_surface_variant}}
+
+  - name: side_sheet_demo
+    widget: SideSheet
+    open: "{{ side_sheet_open.get() }}"
+    handlers: {on_dismiss: close_side_sheet}
+    children:
+      - name: side_sheet_body
+        widget: Vertical
+        style: {padding: 16, spacing: 8, width: expand}
+        children:
+          - widget: Horizontal
+            style: {main_alignment: space_between, cross_alignment: center}
+            children:
+              - {name: side_sheet_title, widget: Text, text: "Side sheet", style: {font_size: 18, color: on_surface}}
+              - {name: side_sheet_close, widget: IconButton, icon: "close", style: {variant: standard}, handlers: {on_click: close_side_sheet}}
+          - {name: side_sheet_body_text, widget: Text, text: "Anchored to the trailing edge of the window.", style: {color: on_surface_variant}}

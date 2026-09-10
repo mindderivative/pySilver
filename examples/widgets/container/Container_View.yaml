@@ -1,0 +1,82 @@
+name: root
+widget: ScrollView
+style: {width: expand, height: expand}
+children:
+  - widget: Vertical
+    style:
+      background: surface
+      padding: 32
+      spacing: 20
+      width: expand
+      cross_alignment: stretch
+    children:
+      - name: title
+        widget: Text
+        text: "Container"
+        style: {text_style: headline-small, color: on_surface}
+
+      - name: summary
+        widget: Text
+        text: "A styled box: background, border, corner radius, and padding around a single child."
+        style: {text_style: body-large, color: on_surface_variant}
+
+      - {name: div1, widget: Divider, style: {width: expand}}
+
+      - name: explanation
+        widget: Text
+        text: |
+          Container is pySilver's own layout primitive, not an M3
+          component -- the plainest possible box, with room for exactly
+          one child. `style.padding` insets that child; `style.border`
+          and `style.corner_radius` decorate the box itself. Since these
+          are plain style properties rather than one of the handful of
+          templated fields (`text:`, `value:`, ...), they can't be bound
+          to a Signal with a double-curly-brace expression directly --
+          the buttons below work by calling `self.app.reload(...)` with
+          a freshly built view each click, the same mechanism hot
+          reload itself uses.
+
+          Use cases: any time content needs a background, a border, or
+          spacing around it with no other layout behaviour -- the base
+          every other styled widget in the catalogue is built on top of.
+        style: {text_style: body-medium, color: on_surface_variant}
+
+      - {name: div2, widget: Divider, style: {width: expand}}
+
+      - name: live_heading
+        widget: Text
+        text: "Live example -- click to change padding and corner radius"
+        style: {text_style: title-medium, color: primary}
+
+      - name: live_demo
+        widget: Container
+        style: {padding: 8, corner_radius: 0, background: primary_container, width: 240, height: 120}
+        children:
+          - {widget: Text, text: "padding: 8, corner_radius: 0", style: {color: on_primary_container}}
+
+      - name: controls
+        widget: Horizontal
+        style: {spacing: 8}
+        children:
+          - {widget: Button, text: "Cycle padding", style: {variant: outlined}, handlers: {on_click: cycle_padding}}
+          - {widget: Button, text: "Cycle corner radius", style: {variant: outlined}, handlers: {on_click: cycle_corner}}
+
+      - {name: div3, widget: Divider, style: {width: expand}}
+
+      - name: code_heading
+        widget: Text
+        text: "Source"
+        style: {text_style: title-medium, color: primary}
+
+      - name: code_panels
+        widget: Horizontal
+        style: {spacing: 16, width: expand, height: 260}
+        children:
+          - name: yaml_source
+            widget: CodeEditor
+            value: "{{ view_source }}"
+            style: {width: expand, height: expand, language: yaml, read_only: true}
+          - name: python_source
+            widget: CodeEditor
+            value: "{{ viewmodel_source }}"
+            style: {width: expand, height: expand, language: python, read_only: true}
