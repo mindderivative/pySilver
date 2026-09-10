@@ -12,9 +12,11 @@ exists.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Any
 
 from ..spec import WidgetKind, WidgetSpec
+from ..tree.element import ElementMixin
 from .base import (
     ButtonElement,
     ContainerElement,
@@ -29,8 +31,14 @@ from .base import (
 
 __all__ = ["build_element", "create_element"]
 
+#: Every registered factory takes one WidgetSpec (no children) and returns
+#: the Element it describes -- never a bare `type`, which mypy strict cannot
+#: distinguish from `type[Any]` and so cannot check the call in
+#: `create_element` below against.
+_ElementFactory = Callable[[WidgetSpec], ElementMixin]
 
-def _material_registry() -> dict[WidgetKind, type]:
+
+def _material_registry() -> dict[WidgetKind, _ElementFactory]:
     """Imported lazily: most of these modules import helpers from base.py,
     and this keeps that a one-directional dependency at module-load time."""
     from . import buttongroup as bg
@@ -113,7 +121,7 @@ def _material_registry() -> dict[WidgetKind, type]:
     }
 
 
-_REGISTRY: dict[WidgetKind, type] = {
+_REGISTRY: dict[WidgetKind, _ElementFactory] = {
     WidgetKind.CONTAINER: ContainerElement,
     WidgetKind.HORIZONTAL: HorizontalElement,
     WidgetKind.VERTICAL: VerticalElement,

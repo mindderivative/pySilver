@@ -453,14 +453,15 @@ def paint_drop_zone(
     t = LINE_THICKNESS
     content_y = y + tab_height
     content_h = height - tab_height
-    if zone == "tab":
-        lx, ly, lw, lh = x, y + tab_height - t, width, t
-    elif zone == "left":
-        lx, ly, lw, lh = x, content_y, t, content_h
-    elif zone == "right":
-        lx, ly, lw, lh = x + width - t, content_y, t, content_h
-    else:  # "bottom"
-        lx, ly, lw, lh = x, y + height - t, width, t
+    match zone:
+        case "tab":
+            lx, ly, lw, lh = x, y + tab_height - t, width, t
+        case "left":
+            lx, ly, lw, lh = x, content_y, t, content_h
+        case "right":
+            lx, ly, lw, lh = x + width - t, content_y, t, content_h
+        case "bottom":
+            lx, ly, lw, lh = x, y + height - t, width, t
     ctx.display_list.add_box(
         lx * dpr,
         ly * dpr,

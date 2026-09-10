@@ -3780,6 +3780,7 @@ pySilver/
 │       │   └── palette.py       # materialyoucolor -> float32 palette buffer
 │       └── widgets/
 │           ├── base.py          # primitives: container, row/column, stack, text, button, icon
+│           ├── registry.py      # widget factory: WidgetKind -> Element class, build_element/create_element
 │           ├── material.py      # M3 catalogue: card, checkbox, chip, fab, ...
 │           ├── navigation.py    # rail (collapsed/expanded, no separate drawer), app bar, tabs, list item, progress
 │           ├── overlays.py      # dialog, menu, tooltip, snackbar, sheets
