@@ -13,12 +13,6 @@ explicit ask — this instruction doesn't authorize that.
 
 ## Memory policy
 
-> **Maintainer's environment only.** This section configures the maintainer's
-> local Claude Code setup and its MCP knowledge-graph server. It is not a
-> requirement for building, testing, or contributing to pySilver, and nothing
-> in the codebase depends on it. Contributors can ignore it entirely; the
-> commit policy above is the part that applies to everyone.
-
 **System Instructions for MCP-Enabled Agent**
 
 1. **User Identification:**
