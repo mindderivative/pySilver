@@ -13,6 +13,7 @@ and one cache entry serves every pixel size the same string is drawn at.
 
 from __future__ import annotations
 
+from collections import OrderedDict
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -22,6 +23,13 @@ import uharfbuzz as hb
 from .font import Face
 
 __all__ = ["ShapeCache", "ShapedRun", "shape_run"]
+
+#: Bounds `ShapeCache`. Each entry holds a `ShapedRun` (four numpy arrays) for
+#: one distinct (text, face, direction, script, language, features) run -- a
+#: widget whose content changes on every keystroke (TextField, CodeEditor)
+#: would otherwise grow this without limit for the life of the process, the
+#: same failure mode `text/__init__.py`'s `_layouts` cache is bounded against.
+_DEFAULT_SHAPE_CACHE_SIZE = 512
 
 
 @dataclass(frozen=True, slots=True)
@@ -149,13 +157,14 @@ class ShapeCache:
     interface -- hit it on every frame after the first and cost nothing.
     """
 
-    __slots__ = ("_hits", "_misses", "_store")
+    __slots__ = ("_hits", "_max_size", "_misses", "_store")
 
-    def __init__(self) -> None:
-        self._store: dict[
+    def __init__(self, max_size: int = _DEFAULT_SHAPE_CACHE_SIZE) -> None:
+        self._store: OrderedDict[
             tuple[str, Path, str, str | None, str | None, tuple[tuple[str, bool], ...]],
             ShapedRun,
-        ] = {}
+        ] = OrderedDict()
+        self._max_size = max_size
         self._hits = 0
         self._misses = 0
 
@@ -180,12 +189,15 @@ class ShapeCache:
         hit = self._store.get(key)
         if hit is not None:
             self._hits += 1
+            self._store.move_to_end(key)
             return hit
         self._misses += 1
         run = shape_run(
             text, face, direction=direction, script=script, language=language, features=features
         )
         self._store[key] = run
+        if len(self._store) > self._max_size:
+            self._store.popitem(last=False)
         return run
 
     @property

@@ -12,6 +12,7 @@ Element tree (ARCHITECTURE.md 4).
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass
 from enum import StrEnum
 from typing import Annotated, Any, Final, Literal
 
@@ -107,14 +108,12 @@ class WidgetKind(StrEnum):
     BUTTON_GROUP = "ButtonGroup"
 
 
+@dataclass(frozen=True, slots=True)
 class SizeSpec:
     """``120`` | ``auto`` | ``expand`` | ``50%`` | ``flex:2``."""
 
-    __slots__ = ("kind", "value")
-
-    def __init__(self, kind: str, value: float = 0.0) -> None:
-        self.kind = kind
-        self.value = value
+    kind: str
+    value: float = 0.0
 
     @classmethod
     def parse(cls, raw: Any) -> SizeSpec:
@@ -143,15 +142,6 @@ class SizeSpec:
         raise ValueError(
             f"invalid size {raw!r}; expected a number, 'auto', 'expand', 'N%' or 'flex:N'"
         )
-
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, SizeSpec) and other.kind == self.kind and other.value == self.value
-
-    def __hash__(self) -> int:
-        return hash((self.kind, self.value))
-
-    def __repr__(self) -> str:
-        return f"SizeSpec({self.kind!r}, {self.value})"
 
 
 AUTO = SizeSpec("auto")

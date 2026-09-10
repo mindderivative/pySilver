@@ -388,7 +388,11 @@ class Flex(LayoutNode):
 
     def perform_layout(self, constraints: Constraints) -> Size:
         max_main = self._max_main(constraints)
-        total_flex = sum(self.flex_of(c) for c in self._children)
+        # `flex_of` is a widget-overridable hook (a StyleSpec attribute read,
+        # not a cheap field access), so it's computed once per child here
+        # rather than up to three times across the two passes below.
+        child_flex = [(c, self.flex_of(c)) for c in self._children]
+        total_flex = sum(flex for _, flex in child_flex)
         gaps = self._spacing * max(0, len(self._children) - 1)
 
         if total_flex > 0 and max_main == INF:
@@ -400,8 +404,8 @@ class Flex(LayoutNode):
         # Pass 1 -- inflexible children against all available space.
         allocated = 0.0
         max_cross_seen = 0.0
-        for child in self._children:
-            if self.flex_of(child) > 0:
+        for child, flex in child_flex:
+            if flex > 0:
                 continue
             size = child.layout(
                 self._child_constraints(
@@ -417,8 +421,7 @@ class Flex(LayoutNode):
         free = max(0.0, max_main - allocated - gaps) if max_main != INF else 0.0
         remaining = free
         flex_seen = 0
-        for child in self._children:
-            flex = self.flex_of(child)
+        for child, flex in child_flex:
             if flex == 0:
                 continue
             flex_seen += flex
