@@ -19,6 +19,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Iterator, Sequence
+from typing import override
 
 from .constraints import OFFSET_ZERO, SIZE_ZERO, Constraints, Offset, Rect, Size
 
@@ -284,6 +285,7 @@ class LayoutNode(ABC):
         """Choose a size satisfying *constraints*, laying out and positioning
         children. Must not read :attr:`offset` or the parent's size."""
 
+    @override
     def __repr__(self) -> str:
         return f"<{type(self).__name__} size={self._size} offset={self._offset}>"
 
@@ -307,5 +309,6 @@ class LeafNode(LayoutNode):
             self._preferred = value
             self.mark_needs_layout()
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         return constraints.constrain(self._preferred)

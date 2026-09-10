@@ -12,7 +12,7 @@ import ast
 import operator
 import re
 from collections.abc import Callable, Mapping
-from typing import Any, Final
+from typing import Any, Final, override
 
 __all__ = ["Expression", "ExpressionError", "has_binding"]
 
@@ -99,12 +99,15 @@ class Expression:
     def evaluate(self, context: Mapping[str, Any]) -> Any:
         return _eval(self._node, context, self.source)
 
+    @override
     def __repr__(self) -> str:
         return f"<Expression {self.source!r}>"
 
+    @override
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Expression) and other.source == self.source
 
+    @override
     def __hash__(self) -> int:
         return hash(self.source)
 
@@ -143,6 +146,7 @@ class Template:
             return str(self._parts[0].evaluate(context))
         return "".join(p if isinstance(p, str) else str(p.evaluate(context)) for p in self._parts)
 
+    @override
     def __repr__(self) -> str:
         return f"<Template {self.source!r}>"
 

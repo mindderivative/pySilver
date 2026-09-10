@@ -108,7 +108,7 @@ from __future__ import annotations
 
 import math
 from pathlib import Path
-from typing import Any, Final
+from typing import Any, Final, override
 
 from ..layout import Constraints, EdgeInsets, Padding, Size
 from ..render.atlas import ImageEntry
@@ -223,6 +223,7 @@ class SliderElement(_StyledMixin, Padding):
 
     # -------------------------------------------------------------- layout
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = outer.max_width if outer.has_bounded_width else self.MIN_WIDTH
@@ -404,6 +405,7 @@ class SliderElement(_StyledMixin, Padding):
             clip_radii=ctx.clip_radii,
         )
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         active = ctx.palette.index(style.background or "primary")

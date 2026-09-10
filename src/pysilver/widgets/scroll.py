@@ -16,7 +16,7 @@ pySilver's own, and marked as such rather than presented as Material.
 
 from __future__ import annotations
 
-from typing import Any, Final
+from typing import Any, Final, override
 
 from ..layout import INF, Axis, Constraints, Offset, Padding, Size
 from ..runtime.events import PointerEvent, WheelEvent
@@ -74,6 +74,7 @@ class ScrollViewElement(_StyledMixin, Padding):
         #: anything sized from the offset has to be told, and told to relayout.
         self._followers: list[Any] = []
 
+    @override
     def configure(self) -> None:
         self._padding = self.style.padding
 
@@ -172,6 +173,7 @@ class ScrollViewElement(_StyledMixin, Padding):
         slop = self.THUMB_GRAB_SLOP
         return (tx - slop <= x <= tx + tw + slop) and (ty - slop <= y <= ty + th + slop)
 
+    @override
     def cursor_at(self, x: float, y: float) -> str | None:
         """A resize cursor over the thumb only.
 
@@ -230,6 +232,7 @@ class ScrollViewElement(_StyledMixin, Padding):
 
     # ---------------------------------------------------------------- layout
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         bounded = outer.has_bounded_width if self.horizontal else outer.has_bounded_height
@@ -307,11 +310,13 @@ class ScrollViewElement(_StyledMixin, Padding):
     #: show a response to.
     CLIPS_CHILDREN = True
 
+    @override
     def child_origin(self, absolute: Offset) -> Offset:
         """Translate the content. This is the whole scroll mechanism."""
         scroll = self.state.scroll
         return Offset(absolute.x - scroll.x, absolute.y - scroll.y)
 
+    @override
     def child_paint_context(self, ctx: PaintContext, absolute: Any) -> PaintContext:
         """Clip content to the viewport.
 
@@ -335,6 +340,7 @@ class ScrollViewElement(_StyledMixin, Padding):
             clip_radii=tuple(r * dpr for r in self.effective_radii),  # type: ignore[arg-type]
         )
 
+    @override
     def paint_foreground(self, ctx: PaintContext, absolute: Any) -> None:
         """The thumb sits over the scrolled content, not under it.
 

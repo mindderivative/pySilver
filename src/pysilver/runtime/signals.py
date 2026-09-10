@@ -16,7 +16,7 @@ import threading
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
-from typing import Any
+from typing import Any, override
 
 __all__ = [
     "Computed",
@@ -116,12 +116,15 @@ def _scope(observer: _Observer) -> Iterator[None]:
 class _NullObserver(_Observer):
     __slots__ = ()
 
+    @override
     def _notify(self) -> None:  # pragma: no cover - never subscribed
         pass
 
+    @override
     def _run(self) -> None:  # pragma: no cover
         pass
 
+    @override
     def _unlink(self) -> None:
         pass
 
@@ -241,6 +244,7 @@ class Signal[T](_Source):
     def subscriber_count(self) -> int:
         return len(self._subs)
 
+    @override
     def __repr__(self) -> str:
         label = f" {self._name!r}" if self._name else ""
         return f"<Signal{label}={self._value!r} subs={len(self._subs)}>"
@@ -268,11 +272,13 @@ class Computed[T](_Source, _Observer):
             self._run()
         return self._value  # type: ignore[return-value]
 
+    @override
     def _run(self) -> None:
         with _scope(self):
             self._value = self._fn()
         self._dirty = False
 
+    @override
     def _notify(self) -> None:
         if self._dirty:
             return
@@ -281,6 +287,7 @@ class Computed[T](_Source, _Observer):
         # it even though the recomputation itself is deferred.
         self._notify_subscribers()
 
+    @override
     def __repr__(self) -> str:
         return f"<Computed dirty={self._dirty} value={self._value!r}>"
 
@@ -297,12 +304,14 @@ class Effect(_Observer):
         if immediate:
             self._run()
 
+    @override
     def _run(self) -> None:
         if self._disposed:
             return
         with _scope(self):
             self._fn()
 
+    @override
     def _notify(self) -> None:
         if not self._disposed:
             _schedule(self)

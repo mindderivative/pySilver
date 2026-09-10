@@ -17,7 +17,7 @@ counterparts (ARCHITECTURE.md 1.2.1).
 from __future__ import annotations
 
 import math
-from typing import Any, Final
+from typing import Any, Final, override
 
 from ..layout import (
     INF,
@@ -117,6 +117,7 @@ class _SelectionContainer(_StyledMixin, Flex):
         Flex.__init__(self, axis=self.axis, spacing=spec.style.spacing)
         self.init_element(spec)
 
+    @override
     def configure(self) -> None:
         self._spacing = self.style.spacing
 
@@ -139,6 +140,7 @@ class _SelectionContainer(_StyledMixin, Flex):
             if hasattr(child, "set_selected"):
                 child.set_selected(bool(active) and child.name == active)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         self.apply_selection()
         return super().perform_layout(constraints)
@@ -186,10 +188,12 @@ class NavItemElement(_StyledMixin, Padding):
         parent = self.parent
         return isinstance(parent, NavigationRailElement) and parent.progress() > 0.5
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         return (self.DRAWER_RADIUS,) * 4 if self._expanded else (self.INDICATOR_H / 2,) * 4
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         if self._expanded:
@@ -203,6 +207,7 @@ class NavItemElement(_StyledMixin, Padding):
             return 0.0
         return measure_text(self._label, LABEL_ROLE, engine=self.text_engine).height
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         selected = self.selected
         size = self.size
@@ -329,6 +334,7 @@ class NavigationRailElement(_SelectionContainer):
             invalidates="layout",
         )
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         #: `constrain_width` is not optional here -- a layout node must
         #: return a size its constraints permit (`layout/node.py` asserts
@@ -347,6 +353,7 @@ class NavigationRailElement(_SelectionContainer):
         inner = constraints.copy_with(min_width=w, max_width=w)
         return super().perform_layout(inner)
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         _box(
             ctx,
@@ -418,6 +425,7 @@ class TopAppBarElement(_StyledMixin, Flex):
         self.init_element(spec)
         self._followed: Any = None
 
+    @override
     def configure(self) -> None:
         self._spacing = self.style.spacing or 8.0
         self._followed = None  # the view may have been renamed by a reload
@@ -462,6 +470,7 @@ class TopAppBarElement(_StyledMixin, Flex):
         expanded = self.expanded_height
         return expanded - (expanded - self.HEIGHT) * self.collapse
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         height = self.current_height
         outer = constraints.copy_with(min_height=height, max_height=height)
@@ -470,6 +479,7 @@ class TopAppBarElement(_StyledMixin, Flex):
             child.offset = child.offset + EdgeInsets.all(self.PAD).top_left
         return size
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         t = self.collapse
@@ -571,9 +581,11 @@ class StatusBarElement(_StyledMixin, Flex):
         Flex.__init__(self, axis=Axis.HORIZONTAL, spacing=spec.style.spacing or 8.0)
         self.init_element(spec)
 
+    @override
     def configure(self) -> None:
         self._spacing = self.style.spacing or 8.0
 
+    @override
     def flex_of(self, child: Any) -> int:
         """A child styled `expand` or `flex:n` is flexible, matching Horizontal and
         Vertical's own `_FlexElement.flex_of`.
@@ -595,6 +607,7 @@ class StatusBarElement(_StyledMixin, Flex):
             return max(1, int(size.value))
         return 1 if size.kind == "expand" else 0
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = constraints.copy_with(min_height=self.HEIGHT, max_height=self.HEIGHT)
         pad = EdgeInsets.symmetric(horizontal=self.PAD_X)
@@ -603,6 +616,7 @@ class StatusBarElement(_StyledMixin, Flex):
             child.offset = child.offset + pad.top_left
         return outer.constrain(inner.inflate(pad))
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         token = ctx.palette.index(self.style.background or "surface_container")
         _box(
@@ -757,6 +771,7 @@ class TabElement(_StyledMixin, Padding):
     def _icon_position(self) -> str:
         return self.style.icon_position
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         label_text = self._text.strip()
         label = measure_text(label_text, TAB_LABEL_ROLE, engine=self.text_engine)
@@ -778,6 +793,7 @@ class TabElement(_StyledMixin, Padding):
             Size(content_width + self.PAD_X * 2, height)
         )
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         token = content_token(ctx, self.style, "primary" if self.selected else "on_surface_variant")
         _emit_state_layer(ctx, self, absolute, token, (0.0,) * 4)
@@ -974,11 +990,13 @@ class TabsElement(_SelectionContainer):
         has_icon = any(isinstance(c, TabElement) and c._has_icon for c in self.children)
         return TabElement.ICON_HEIGHT if has_icon else self.HEIGHT
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         height = self._bar_height()
         inner = constraints.copy_with(min_height=height, max_height=height)
         return super().perform_layout(inner)
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         _box(
             ctx,
@@ -1055,11 +1073,13 @@ class SegmentElement(_StyledMixin, Padding):
         )
         return value
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         label = measure_text(self._text, TAB_LABEL_ROLE, engine=self.text_engine)
         width = label.width + self.PAD_X * 2 + (self.CHECK + self.GAP) * self._check_progress()
         return self.sized(constraints, self.style).constrain(Size(width, self.HEIGHT))
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         selected = self.selected
         token = content_token(
@@ -1128,6 +1148,7 @@ class SegmentedButtonElement(_SelectionContainer):
     RADIUS: Final = 20.0
     axis = Axis.HORIZONTAL
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         return (self.RADIUS,) * 4
@@ -1137,12 +1158,14 @@ class SegmentedButtonElement(_SelectionContainer):
         """True when the view gave the group a width to fill."""
         return self.style.width.kind in ("fixed", "expand", "percent")
 
+    @override
     def flex_of(self, child: Any) -> int:
         """With an explicit width, segments divide it equally -- M3's stretched
         form. Without one the group shrinks to its content, so the outline
         never runs on past the last segment."""
         return 1 if self._stretches else super().flex_of(child)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         inner = constraints.copy_with(min_height=self.HEIGHT, max_height=self.HEIGHT)
         self._main_size = MainAxisSize.MAX if self._stretches else MainAxisSize.MIN
@@ -1150,6 +1173,7 @@ class SegmentedButtonElement(_SelectionContainer):
 
     CLIPS_CHILDREN = True
 
+    @override
     def child_paint_context(self, ctx: PaintContext, absolute: Any) -> PaintContext:
         """Clip segments to the rounded container so a selected end segment's
         square fill does not poke past the outline."""
@@ -1169,6 +1193,7 @@ class SegmentedButtonElement(_SelectionContainer):
             clip_radii=(self.RADIUS * dpr,) * 4,
         )
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         outline = ctx.palette.index("outline")
         _box(
@@ -1232,6 +1257,7 @@ class ListItemElement(_StyledMixin, Padding):
             return self.HEIGHTS[variant]
         return 72.0 if (self._supporting).strip() else 56.0
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = outer.max_width if outer.has_bounded_width else 320.0
@@ -1246,6 +1272,7 @@ class ListItemElement(_StyledMixin, Padding):
             self.child.offset = Offset(self.PAD_X, top)
         return outer.constrain(Size(width, height))
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         headline = content_token(ctx, style, "on_surface")
@@ -1302,6 +1329,7 @@ class TreeViewElement(_SelectionContainer):
 
     axis = Axis.VERTICAL
 
+    @override
     def apply_selection(self) -> None:
         active = self._value.strip()
 
@@ -1360,6 +1388,7 @@ class TreeItemElement(_StyledMixin, LayoutNode):
         LayoutNode.__init__(self)
         self.init_element(spec)
 
+    @override
     @property
     def depth(self) -> int:
         """Nesting level, derived from ancestry rather than stored -- the
@@ -1385,6 +1414,7 @@ class TreeItemElement(_StyledMixin, LayoutNode):
             invalidates="layout",
         )
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = outer.max_width if outer.has_bounded_width else 320.0
@@ -1418,6 +1448,7 @@ class TreeItemElement(_StyledMixin, LayoutNode):
     #: correct from the Python side.
     HIDDEN_EXTENT: Final = 0.01
 
+    @override
     def child_paint_context(self, ctx: PaintContext, absolute: Any) -> PaintContext:
         """Clip to this node's own (animated) size, INTERSECTED with whatever
         clip already reached it -- see the class docstring for why this
@@ -1439,6 +1470,7 @@ class TreeItemElement(_StyledMixin, LayoutNode):
             clip_radii=ctx.clip_radii,
         )
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         header_h = self._header_height()
@@ -1538,10 +1570,12 @@ class LinearProgressElement(_StyledMixin, Padding):
         Padding.__init__(self, None, EdgeInsets())
         self.init_element(spec)
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         return (self.HEIGHT / 2,) * 4
 
+    @override
     @property
     def indeterminate(self) -> bool:
         """No resolved value at all means the wait time is unknown.
@@ -1560,6 +1594,7 @@ class LinearProgressElement(_StyledMixin, Padding):
     def progress(self) -> float:
         return max(0.0, min(1.0, self.number))
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = outer.max_width if outer.has_bounded_width else 0.0
@@ -1582,6 +1617,7 @@ class LinearProgressElement(_StyledMixin, Padding):
         tail = max(0.0, t * 2.0 - 1.0)
         return tail, head - tail
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         radius = self.HEIGHT / 2
         _box(
@@ -1643,6 +1679,7 @@ class CircularProgressElement(_StyledMixin, Padding):
     #: How much of the ring the spinning arc covers.
     INDETERMINATE_SWEEP: Final = 0.75
 
+    @override
     @property
     def indeterminate(self) -> bool:
         """Same rule as `LinearProgress.indeterminate` -- see its docstring."""
@@ -1669,6 +1706,7 @@ class CircularProgressElement(_StyledMixin, Padding):
             return float(style.height.value)
         return self.DIAMETER
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         d = self._diameter(constraints)
@@ -1678,6 +1716,7 @@ class CircularProgressElement(_StyledMixin, Padding):
         # rather than stretched into an ellipse.
         return outer.constrain(Size(d, d))
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         thickness = self.thickness

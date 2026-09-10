@@ -34,7 +34,7 @@ the one exception and is marked where it is defined.
 from __future__ import annotations
 
 import math
-from typing import Any, Final
+from typing import Any, Final, override
 
 from ..layout import Axis, Constraints, Flex, Offset, Size
 from ..runtime.events import WheelEvent
@@ -96,6 +96,7 @@ class CarouselElement(_StyledMixin, Flex):
         #: Total strip width including padding; set during layout.
         self._extent = 0.0
 
+    @override
     def configure(self) -> None:
         self._spacing = self.GAP
 
@@ -274,6 +275,7 @@ class CarouselElement(_StyledMixin, Flex):
         gaps = self.GAP * (len(pattern) - 1)
         return max(self.SMALL_MAX, available - fixed - gaps)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = outer.max_width if outer.has_bounded_width else 0.0
@@ -346,6 +348,7 @@ class CarouselElement(_StyledMixin, Flex):
 
     # ---------------------------------------------------------------- paint
 
+    @override
     def child_origin(self, absolute: Offset) -> Offset:
         """Paint-time translation for the uncontained layout.
 
@@ -358,6 +361,7 @@ class CarouselElement(_StyledMixin, Flex):
 
     CLIPS_CHILDREN = True
 
+    @override
     def child_paint_context(self, ctx: PaintContext, absolute: Any) -> PaintContext:
         """Clip items to the strip, so one scrolled off does not spill out."""
         dpr = ctx.pixel_ratio
@@ -406,14 +410,17 @@ class CarouselItemElement(_StyledMixin, Flex):
         Flex.__init__(self, axis=Axis.VERTICAL, spacing=spec.style.spacing)
         self.init_element(spec)
 
+    @override
     def configure(self) -> None:
         self._spacing = self.style.spacing
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         radii = self.style.corner_radius
         return radii if any(radii) else (self.RADIUS,) * 4
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         # Takes exactly the box the carousel assigned it.
         size = Size(
@@ -452,9 +459,11 @@ class CarouselItemElement(_StyledMixin, Flex):
         normalised = max(-1.0, min(1.0, normalised))
         return float(-normalised * self.size.width * self.PARALLAX)
 
+    @override
     def child_origin(self, absolute: Offset) -> Offset:
         return Offset(absolute.x + self.parallax, absolute.y)
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         radii = self.effective_radii
@@ -468,6 +477,7 @@ class CarouselItemElement(_StyledMixin, Flex):
             radius=radii[0],
         )
 
+    @override
     def paint_foreground(self, ctx: PaintContext, absolute: Any) -> None:
         """The label sits **over** the item's visual.
 
@@ -493,6 +503,7 @@ class CarouselItemElement(_StyledMixin, Flex):
 
     CLIPS_CHILDREN = True
 
+    @override
     def child_paint_context(self, ctx: PaintContext, absolute: Any) -> PaintContext:
         """Clip content to the rounded item -- M3 items hold images."""
         dpr = ctx.pixel_ratio

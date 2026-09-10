@@ -14,7 +14,7 @@ the shape scale and marked as inferred rather than quietly invented.
 
 from __future__ import annotations
 
-from typing import Any, ClassVar, Final
+from typing import Any, ClassVar, Final, override
 
 from ..layout import (
     OFFSET_ZERO,
@@ -135,6 +135,7 @@ class _PaddedFlex(_StyledMixin, Flex):
         Flex.__init__(self, axis=self.axis, spacing=spec.style.spacing)
         self.init_element(spec)
 
+    @override
     def configure(self) -> None:
         self._spacing = self.style.spacing
 
@@ -142,6 +143,7 @@ class _PaddedFlex(_StyledMixin, Flex):
         pad = self.style.padding
         return pad if pad != EdgeInsets() else self.INSETS
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         pad = self.insets()
         self._main_size = MainAxisSize.MIN
@@ -199,6 +201,7 @@ class DialogElement(_StyledMixin, Padding):
     #: "Padding between icon and title: 16dp".
     GAP_ICON_TITLE: Final = 16.0
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         radii = self.style.corner_radius
@@ -213,6 +216,7 @@ class DialogElement(_StyledMixin, Padding):
         pad = style.padding
         return pad if pad != EdgeInsets() else EdgeInsets.all(DialogElement.PADDING)
 
+    @override
     def configure(self) -> None:
         self._padding = self._insets(self.style)
 
@@ -250,6 +254,7 @@ class DialogElement(_StyledMixin, Padding):
             body_h += self.GAP_TITLE_BODY
         return head_h, body_h
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         pad = self._padding
         width = self._width(constraints)
@@ -292,6 +297,7 @@ class DialogElement(_StyledMixin, Padding):
             height = float(self.style.height.value)
         return constraints.constrain(Size(width, height))
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         radii = self.effective_radii
@@ -405,6 +411,7 @@ class PopoverElement(_StyledMixin, Padding):
 
     DEFAULT_PLACEMENT = "anchor"
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         radii = self.style.corner_radius
@@ -426,6 +433,7 @@ class PopoverElement(_StyledMixin, Padding):
             PopoverElement.PAD_BOTTOM,
         )
 
+    @override
     def configure(self) -> None:
         self._padding = self._insets(self.style)
 
@@ -445,6 +453,7 @@ class PopoverElement(_StyledMixin, Padding):
             natural = max(natural, measure_text(body, self.BODY, engine=engine).width)
         return min(inner_max, natural) if natural else 0.0
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         pad = self._padding
         outer_max = (
@@ -492,6 +501,7 @@ class PopoverElement(_StyledMixin, Padding):
         height = pad.vertical + text_h + actions_h
         return constraints.constrain(Size(width, height))
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         _surface(
@@ -566,6 +576,7 @@ class MenuElement(_PaddedFlex):
     INSETS: ClassVar[EdgeInsets] = EdgeInsets.symmetric(vertical=PAD_Y)
     axis = Axis.VERTICAL
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         radii = self.style.corner_radius
@@ -589,6 +600,7 @@ class MenuElement(_PaddedFlex):
         )
         return constraints.constrain_width(_clamp(natural, self.MIN_WIDTH, self.MAX_WIDTH))
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         width = (
             constraints.constrain_width(float(self.style.width.value))
@@ -598,6 +610,7 @@ class MenuElement(_PaddedFlex):
         inner = constraints.copy_with(min_width=width, max_width=width)
         return super().perform_layout(inner)
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         _surface(
             ctx,
@@ -688,6 +701,7 @@ class MenuItemElement(_StyledMixin, Padding):
                 )
         return width
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = outer.max_width if outer.has_bounded_width else self.natural_width()
@@ -696,6 +710,7 @@ class MenuItemElement(_StyledMixin, Padding):
         )
         return outer.constrain(Size(width, height))
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         label_token = content_token(ctx, style, "on_surface")
@@ -791,6 +806,7 @@ class TooltipElement(_StyledMixin, Padding):
     PAD_Y: Final = 4.0
     LABEL: Final = 12.0
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         radii = self.style.corner_radius
@@ -800,6 +816,7 @@ class TooltipElement(_StyledMixin, Padding):
         Padding.__init__(self, None, EdgeInsets())
         self.init_element(spec)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         label = self._text.strip()
@@ -811,6 +828,7 @@ class TooltipElement(_StyledMixin, Padding):
             )
         )
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         _surface(
@@ -875,6 +893,7 @@ class SnackbarElement(_StyledMixin, Padding):
     MAX_WIDTH: Final = 600.0
     DEFAULT_PLACEMENT = "bottom"
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         radii = self.style.corner_radius
@@ -897,6 +916,7 @@ class SnackbarElement(_StyledMixin, Padding):
         local = x - self.absolute_rect().x
         return bool(local >= self.size.width - action_w)
 
+    @override
     def cursor_at(self, x: float, y: float) -> str | None:
         if self._on_action(x):
             return "pointer"
@@ -957,6 +977,7 @@ class SnackbarElement(_StyledMixin, Padding):
         timer = Animation(0.0, 1.0, duration=duration, curve="linear", on_change=_check_done)
         self.state.data["auto_dismiss_timer"] = self.ticker.add(timer)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = _clamped_width(
@@ -982,6 +1003,7 @@ class SnackbarElement(_StyledMixin, Padding):
         one_line = measure_text("Ag", self.LABEL, engine=self.text_engine).height
         return self.MIN_HEIGHT if text_height <= one_line + 1.0 else self.MAX_HEIGHT
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         self._maybe_arm_auto_dismiss()
         style = self.style
@@ -1066,6 +1088,7 @@ class BottomSheetElement(_PaddedFlex):
     DOCKED = True
     axis = Axis.VERTICAL
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         radii = self.style.corner_radius
@@ -1077,11 +1100,13 @@ class BottomSheetElement(_PaddedFlex):
             return 0.0
         return self.HANDLE_HEIGHT + self.HANDLE_PAD * 2
 
+    @override
     def insets(self) -> EdgeInsets:
         pad = super().insets()
         band = self._handle_band()
         return EdgeInsets(pad.left, pad.top + band, pad.right, pad.bottom) if band else pad
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         width = _clamped_width(
             constraints,
@@ -1117,6 +1142,7 @@ class BottomSheetElement(_PaddedFlex):
             return Offset(0.0, float(snap.value))
         return OFFSET_ZERO
 
+    @override
     def cursor_at(self, x: float, y: float) -> str | None:
         if self.grabs_handle(x, y):
             return "ns-resize"
@@ -1170,6 +1196,7 @@ class BottomSheetElement(_PaddedFlex):
             )
         self.mark_needs_paint()
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         _surface(
             ctx,
@@ -1211,6 +1238,7 @@ class SideSheetElement(_PaddedFlex):
     DOCKED = True
     axis = Axis.VERTICAL
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         radii = self.style.corner_radius
@@ -1222,6 +1250,7 @@ class SideSheetElement(_PaddedFlex):
             return (0.0, r, r, 0.0)
         return (r, 0.0, 0.0, r)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         style = self.style
         width = _clamped_width(
@@ -1237,6 +1266,7 @@ class SideSheetElement(_PaddedFlex):
             inner = inner.copy_with(min_height=height, max_height=height)
         return super().perform_layout(inner)
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         _surface(
             ctx,

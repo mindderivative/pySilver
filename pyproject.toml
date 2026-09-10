@@ -167,6 +167,7 @@ python_version = "3.12"
 packages = ["pysilver"]
 strict = true
 warn_unreachable = true
+enable_error_code = ["explicit-override"]
 
 [[tool.mypy.overrides]]
 module = ["wgpu.*", "rendercanvas.*", "materialyoucolor.*", "freetype.*", "uharfbuzz.*", "uniseg.*", "bidi.*", "glfw.*", "fontTools.*", "svgelements.*"]

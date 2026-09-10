@@ -36,7 +36,7 @@ from __future__ import annotations
 
 import calendar
 import datetime
-from typing import Any, Final
+from typing import Any, Final, override
 
 from ..layout import Constraints, EdgeInsets, Padding, Size
 from ..runtime.events import ChangeEvent, EventType
@@ -81,6 +81,7 @@ class DatePickerElement(_StyledMixin, Padding):
         self._view_year = selected.year
         self._view_month = selected.month
 
+    @override
     def configure(self) -> None:
         selected = self._selected()
         if selected is not None:
@@ -110,6 +111,7 @@ class DatePickerElement(_StyledMixin, Padding):
         cal = calendar.Calendar(firstweekday=6)  # Sunday first
         return list(cal.monthdayscalendar(self._view_year, self._view_month))
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         height = (
@@ -177,6 +179,7 @@ class DatePickerElement(_StyledMixin, Padding):
 
     # --------------------------------------------------------------- paint
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         dpr = ctx.pixel_ratio

@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Final
+from typing import TYPE_CHECKING, Any, Final, override
 
 import numpy as np
 
@@ -1184,6 +1184,7 @@ class ElementMixin:
         """Every element carrying *class_name*. Classes repeat by design."""
         return [e for e in self.walk_elements() if class_name in e.classes]
 
+    @override
     def __repr__(self) -> str:
         label = self.spec.name or self.spec.id
         return f"<{type(self).__name__} {label!r} size={self.size}>"

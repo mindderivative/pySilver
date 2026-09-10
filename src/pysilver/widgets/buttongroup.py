@@ -57,7 +57,7 @@ small follow-up, not done here.
 
 from __future__ import annotations
 
-from typing import Final
+from typing import Final, override
 
 from ..layout import Axis, Constraints, Flex, Size
 from ..spec import WidgetSpec
@@ -119,6 +119,7 @@ class ButtonGroupElement(_StyledMixin, Flex):
     def _inner_radius_for(self, size: str | None) -> float:
         return self.INNER_RADIUS_BY_SIZE.get(size, self.INNER_RADIUS) if size else self.INNER_RADIUS
 
+    @override
     def configure(self) -> None:
         self._spacing = self._spacing_for(self.style.variant, None)
 
@@ -136,6 +137,7 @@ class ButtonGroupElement(_StyledMixin, Flex):
             trailing = outer if i == last else inner
             child._group_radii = (leading, trailing, trailing, leading)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         # Unlike `_apply_shape()` below (paint-only, needs each child's
         # already-computed `size.height`, so it runs after), the flags set

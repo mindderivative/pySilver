@@ -33,7 +33,7 @@ from __future__ import annotations
 
 import sys
 from collections import deque
-from typing import Any
+from typing import Any, override
 
 from .accessibility import AccessibleNode, Bridge
 
@@ -145,6 +145,7 @@ class AccessKitBridge(Bridge):
         """The last reader detached. Nothing to undo: the next `update` is
         skipped by `update_if_active` on its own."""
 
+    @override
     def update(self, tree: AccessibleNode) -> None:
         if self._adapter is None:
             return

@@ -20,7 +20,7 @@ line, a 24dp input line, 8dp padding. 8 + 16 + 24 + 8 = 56.
 
 from __future__ import annotations
 
-from typing import Any, Final
+from typing import Any, Final, override
 
 from ..layout import Constraints, EdgeInsets, Offset, Padding, Size
 from ..runtime.clipboard import clipboard
@@ -119,6 +119,7 @@ class TextFieldElement(_StyledMixin, Padding):
         self._scroll_x = 0.0
         self._scroll_y = 0.0
 
+    @override
     def configure(self) -> None:
         self._adopt_external()
 
@@ -145,6 +146,7 @@ class TextFieldElement(_StyledMixin, Padding):
         """Whether the label sits above the input rather than in it."""
         return bool(self.content) or self.state.focused
 
+    @override
     @property
     def label(self) -> str:
         return self._text.strip()
@@ -212,6 +214,7 @@ class TextFieldElement(_StyledMixin, Padding):
             return 0.0
         return self.SUPPORTING_GAP + self.FLOAT_ROLE.line_height
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = outer.max_width if outer.has_bounded_width else self.MIN_WIDTH
@@ -297,6 +300,7 @@ class TextFieldElement(_StyledMixin, Padding):
             return ctx.palette.index("primary")
         return ctx.palette.index("on_surface_variant")
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         outlined = style.variant == "outlined"

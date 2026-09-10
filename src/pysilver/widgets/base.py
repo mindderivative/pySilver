@@ -9,7 +9,7 @@ slotted layout base and the mixin coexist without an instance-layout conflict.
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Any, Final
+from typing import Any, Final, override
 
 from ..layout import (
     Alignment,
@@ -125,9 +125,11 @@ class ContainerElement(_StyledMixin, Padding):
         Padding.__init__(self, None, spec.style.padding)
         self.init_element(spec)
 
+    @override
     def configure(self) -> None:
         self._padding = self.style.padding
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         inner = super().perform_layout(outer.loosen() if not outer.is_tight else outer)
@@ -160,6 +162,7 @@ class _FlexElement(_StyledMixin, Flex):
         self._padding = style.padding
         self.init_element(spec)
 
+    @override
     def flex_of(self, child: Any) -> int:
         """A child styled `expand` or `flex:n` along the main axis is flexible.
 
@@ -176,6 +179,7 @@ class _FlexElement(_StyledMixin, Flex):
             return max(1, int(size.value))
         return 1 if size.kind == "expand" else 0
 
+    @override
     def configure(self) -> None:
         style = self.style
         self._main_alignment = _MAIN[style.main_alignment]
@@ -184,6 +188,7 @@ class _FlexElement(_StyledMixin, Flex):
         self._main_size = _main_size_for(self.axis, style)
         self._padding = style.padding
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         pad: EdgeInsets = self._padding
@@ -218,6 +223,7 @@ class StackElement(_StyledMixin, Stack):
         Stack.__init__(self)
         self.init_element(spec)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         size = super().perform_layout(self.sized(constraints, self.style))
         for child in self.children:
@@ -479,6 +485,7 @@ class ButtonElement(ContainerElement):
             invalidates="layout",
         )
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         """Size to the label, floored at M3's minimum.
 
@@ -499,6 +506,7 @@ class ButtonElement(ContainerElement):
 
     #: Only the `elevated` variant rests above the surface; M3 puts filled,
     #: tonal and outlined buttons at level 0.
+    @override
     @property
     def resting_elevation(self) -> int:
         return 1 if self.style.variant == "elevated" else 0
@@ -512,6 +520,7 @@ class ButtonElement(ContainerElement):
         "text": (None, "primary", False, False),
     }
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         # Pressed always wins -- "both round and square buttons should
@@ -535,6 +544,7 @@ class ButtonElement(ContainerElement):
     def _variant(self) -> tuple[str | None, str, bool, bool]:
         return self.VARIANTS.get(self.style.variant, self.VARIANTS["filled"])
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         container, content, outlined, elevated = self._variant()
@@ -641,6 +651,7 @@ class LinkElement(_StyledMixin, Padding):
     def _color_role(self) -> str:
         return "tertiary" if self.style.variant == "tertiary" else "primary"
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         style = self.style
@@ -653,6 +664,7 @@ class LinkElement(_StyledMixin, Padding):
         )
         return outer.constrain(label)
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         if not self._text.strip():
             return
@@ -704,6 +716,7 @@ class TextElement(_StyledMixin, Padding):
         Padding.__init__(self, None, spec.style.padding)
         self.init_element(spec)
 
+    @override
     def configure(self) -> None:
         self._padding = self.style.padding
 
@@ -761,6 +774,7 @@ class TextElement(_StyledMixin, Padding):
         local_y = y - rect.y - self._padding.top
         return index_at(self._paragraph(), local_x, local_y)
 
+    @override
     def cursor_at(self, x: float, y: float) -> str | None:
         if self.selectable and self.style.cursor is None:
             return "text"
@@ -835,6 +849,7 @@ class TextElement(_StyledMixin, Padding):
             line_height=self.style.line_height,
         )
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         return outer.constrain(self.measure(constraints).inflate(self._padding))
@@ -865,6 +880,7 @@ class TextElement(_StyledMixin, Padding):
                 alpha=self.SELECTION_ALPHA,
             )
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         super().paint_self(ctx, absolute)
         if not self._text.strip():
@@ -897,15 +913,18 @@ class IconElement(_StyledMixin, Padding):
         Padding.__init__(self, None, spec.style.padding)
         self.init_element(spec)
 
+    @override
     def configure(self) -> None:
         self._padding = self.style.padding
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         style = self.style
         outer = self.sized(constraints, style)
         natural = Size(style.icon_size, style.icon_size).inflate(self._padding)
         return outer.constrain(natural)
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         super().paint_self(ctx, absolute)
         name = self._icon.strip()
@@ -935,6 +954,7 @@ class SpacerElement(_StyledMixin, Padding):
         Padding.__init__(self, None, EdgeInsets())
         self.init_element(spec)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         return outer.constrain(outer.smallest)

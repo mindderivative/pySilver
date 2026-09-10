@@ -9,7 +9,7 @@ looks. Matching by ``(id, widget)`` and updating in place preserves all of it.
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any
+from typing import Any, override
 
 from ..spec import WidgetSpec
 from .element import ElementMixin
@@ -37,6 +37,7 @@ class ReconcileStats:
         self.disposed = 0
         self.skipped = 0
 
+    @override
     def __repr__(self) -> str:
         return (
             f"<ReconcileStats created={self.created} updated={self.updated} "

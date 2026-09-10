@@ -78,7 +78,7 @@ widget should hard-depend on.
 from __future__ import annotations
 
 import dataclasses
-from typing import Any, Final
+from typing import Any, Final, override
 
 import numpy as np
 
@@ -260,9 +260,11 @@ class CodeEditorElement(_StyledMixin, Padding):
         #: the user already accepted only for an actual edit.
         self._highlight_cache: tuple[str, str, Any] | None = None
 
+    @override
     def configure(self) -> None:
         self._adopt_external()
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         radii = self.style.corner_radius
@@ -347,6 +349,7 @@ class CodeEditorElement(_StyledMixin, Padding):
             max(0.0, self.size.height - 2 * self.CONTENT_PAD_Y),
         )
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         if not outer.has_bounded_height:
@@ -409,6 +412,7 @@ class CodeEditorElement(_StyledMixin, Padding):
         self._highlight_cache = (content, language, spans)
         return spans
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Offset) -> None:
         if self.size.is_empty:
             return

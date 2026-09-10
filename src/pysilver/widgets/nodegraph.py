@@ -47,7 +47,7 @@ from), but the ordinary node-editor convention.
 
 from __future__ import annotations
 
-from typing import Any, Final
+from typing import Any, Final, override
 
 from ..layout import INF, Constraints, LayoutNode, Offset, Rect, SingleChildNode, Size
 from ..runtime.events import ChangeEvent, EventType
@@ -101,6 +101,7 @@ class NodeElement(_StyledMixin, SingleChildNode):
         SingleChildNode.__init__(self)
         self.init_element(spec)
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         radii = self.style.corner_radius
@@ -137,6 +138,7 @@ class NodeElement(_StyledMixin, SingleChildNode):
 
     # --------------------------------------------------------------- layout
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         child = self.child
@@ -164,6 +166,7 @@ class NodeElement(_StyledMixin, SingleChildNode):
     def _on_title(self, y: float) -> bool:
         return 0.0 <= y - self.absolute_rect().y <= self.TITLE_HEIGHT
 
+    @override
     def cursor_at(self, x: float, y: float) -> str | None:
         if self._on_title(y):
             # "move"/"grab" would be the honest cursor for a draggable title
@@ -223,6 +226,7 @@ class NodeElement(_StyledMixin, SingleChildNode):
 
     # --------------------------------------------------------------- paint
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Offset) -> None:
         if self.size.is_empty:
             return
@@ -309,6 +313,7 @@ class NodeGraphElement(_StyledMixin, LayoutNode):
 
     # ---------------------------------------------------------------- layout
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = outer.max_width if outer.has_bounded_width else self.DEFAULT_WIDTH
@@ -321,6 +326,7 @@ class NodeGraphElement(_StyledMixin, LayoutNode):
 
     # ------------------------------------------------------------------ pan
 
+    @override
     def child_origin(self, absolute: Offset) -> Offset:
         """Translate the whole subtree by the pan offset.
 
@@ -330,6 +336,7 @@ class NodeGraphElement(_StyledMixin, LayoutNode):
         scroll = self.state.scroll
         return Offset(absolute.x - scroll.x, absolute.y - scroll.y)
 
+    @override
     def child_paint_context(self, ctx: PaintContext, absolute: Offset) -> PaintContext:
         dpr = ctx.pixel_ratio
         own = Rect(
@@ -388,6 +395,7 @@ class NodeGraphElement(_StyledMixin, LayoutNode):
 
     # --------------------------------------------------------------- paint
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Offset) -> None:
         super().paint_self(ctx, absolute)
         if not self.spec.edges:

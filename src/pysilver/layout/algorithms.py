@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from enum import Enum
+from typing import override
 
 from .constraints import (
     ALIGN_CENTER,
@@ -87,6 +88,7 @@ class SingleChildNode(LayoutNode):
     def __init__(self, child: LayoutNode | None = None) -> None:
         super().__init__([child] if child is not None else [])
 
+    @override
     def insert_child(self, index: int, child: LayoutNode) -> None:
         """Reject a second child rather than silently dropping it.
 
@@ -130,6 +132,7 @@ class Padding(SingleChildNode):
             self._padding = value
             self.mark_needs_layout()
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         child = self.child
         if child is None:
@@ -171,6 +174,7 @@ class Align(SingleChildNode):
             self._alignment = value
             self.mark_needs_layout()
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         shrink_w = self._width_factor is not None or not constraints.has_bounded_width
         shrink_h = self._height_factor is not None or not constraints.has_bounded_height
@@ -217,6 +221,7 @@ class SizedBox(SingleChildNode):
         self._width = width
         self._height = height
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         inner = constraints.tighten(width=self._width, height=self._height)
         child = self.child
@@ -236,6 +241,7 @@ class ConstrainedBox(SingleChildNode):
         super().__init__(child)
         self._extra = extra
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         inner = self._extra.enforce(constraints)
         child = self.child
@@ -279,6 +285,7 @@ class Flexible(SingleChildNode):
     def fit(self) -> FlexFit:
         return self._fit
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         child = self.child
         if child is None:
@@ -386,6 +393,7 @@ class Flex(LayoutNode):
 
     # --- layout -------------------------------------------------------
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         max_main = self._max_main(constraints)
         # `flex_of` is a widget-overridable hook (a StyleSpec attribute read,
@@ -523,6 +531,7 @@ class Stack(LayoutNode):
         self._alignment = alignment
         self._expand = expand
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         if not self._children:
             return constraints.constrain(

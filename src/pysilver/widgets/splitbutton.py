@@ -31,7 +31,7 @@ this widget's own `name`, opened and closed from `on_trailing_click`.
 
 from __future__ import annotations
 
-from typing import Any, Final
+from typing import Any, Final, override
 
 from ..layout import Constraints, EdgeInsets, Padding, Size
 from ..spec import WidgetSpec
@@ -70,6 +70,7 @@ class SplitButtonElement(_StyledMixin, Padding):
     def _leading_width(self) -> float:
         return max(self.HEIGHT, self._label_width() + 2 * self.PAD_X)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = self._leading_width() + self.GAP + self.TRAILING_WIDTH
@@ -123,6 +124,7 @@ class SplitButtonElement(_StyledMixin, Padding):
             return 0.0
         return _state_alpha(self)
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         dpr = ctx.pixel_ratio

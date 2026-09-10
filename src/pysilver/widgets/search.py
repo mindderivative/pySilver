@@ -39,7 +39,7 @@ edit, identically to `TextField`.
 
 from __future__ import annotations
 
-from typing import Any, Final
+from typing import Any, Final, override
 
 from ..layout import Constraints, EdgeInsets, Padding, Size
 from ..runtime.clipboard import clipboard
@@ -88,9 +88,11 @@ class SearchBarElement(_StyledMixin, Padding):
         self._external = spec.value or ""
         self._scroll_x = 0.0
 
+    @override
     def configure(self) -> None:
         self._adopt_external()
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         return (self.RADIUS,) * 4
@@ -143,6 +145,7 @@ class SearchBarElement(_StyledMixin, Padding):
             line_height=self.INPUT_ROLE.line_height,
         )
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = outer.max_width if outer.has_bounded_width else self.MIN_WIDTH
@@ -181,6 +184,7 @@ class SearchBarElement(_StyledMixin, Padding):
         phase = self.animated("caret", 1.0, duration=self.BLINK_PERIOD, curve="linear", repeat=True)
         return phase < 0.5
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         dpr = ctx.pixel_ratio

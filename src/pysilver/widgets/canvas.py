@@ -30,7 +30,7 @@ with, just callable directly instead of through a widget's own `paint_self`.
 
 from __future__ import annotations
 
-from typing import Final
+from typing import Final, override
 
 import numpy as np
 
@@ -317,6 +317,7 @@ class CanvasElement(_StyledMixin, Padding):
         Padding.__init__(self, None, EdgeInsets())
         self.init_element(spec)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         return outer.constrain(
@@ -344,6 +345,7 @@ class CanvasElement(_StyledMixin, Padding):
             clip_radii=ctx.clip_radii,
         )
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Offset) -> None:
         super().paint_self(ctx, absolute)
         painter = self.handlers.get("on_paint")

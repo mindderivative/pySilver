@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import override
 
 import numpy as np
 from PIL import Image as PILImage
@@ -153,6 +154,7 @@ class ImageElement(_StyledMixin, Padding):
         )
         return self._resolved_entry
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         entry = self._entry()
@@ -161,6 +163,7 @@ class ImageElement(_StyledMixin, Padding):
         )
         return outer.constrain(natural)
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Offset) -> None:
         super().paint_self(ctx, absolute)
         entry = self._entry()

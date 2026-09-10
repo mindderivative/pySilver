@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Final
+from typing import Final, override
 
 import freetype
 import numpy as np
@@ -249,5 +249,6 @@ class Face:
         coverage = _GAMMA_LUT[coverage]
         return GlyphBitmap(coverage, float(slot.bitmap_left), float(slot.bitmap_top))
 
+    @override
     def __repr__(self) -> str:
         return f"<Face {self.family!r} {self.subfamily!r} w{self.weight} {len(self._coverage)}cp>"

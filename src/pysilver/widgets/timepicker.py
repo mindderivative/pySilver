@@ -35,7 +35,7 @@ own reasonable choice, the same kind of gap `DatePicker`'s 320dp width and
 from __future__ import annotations
 
 import datetime
-from typing import Any, Final
+from typing import Any, Final, override
 
 from ..layout import Constraints, EdgeInsets, Padding, Size
 from ..runtime.events import ChangeEvent, EventType
@@ -82,6 +82,7 @@ class TimePickerElement(_StyledMixin, Padding):
         now = datetime.datetime.now().time().replace(second=0, microsecond=0)
         self._view = _parse_time(spec.value or "") or now
 
+    @override
     def configure(self) -> None:
         parsed = _parse_time(self._value)
         if parsed is not None:
@@ -114,6 +115,7 @@ class TimePickerElement(_StyledMixin, Padding):
         hour24 = (hour12 % 12) + (12 if pm else 0)
         self._commit(self._view.replace(hour=hour24))
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         return outer.constrain(Size(self.WIDTH, self.HEIGHT))
@@ -176,6 +178,7 @@ class TimePickerElement(_StyledMixin, Padding):
 
     # --------------------------------------------------------------- paint
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         dpr = ctx.pixel_ratio

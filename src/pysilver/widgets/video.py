@@ -39,7 +39,7 @@ application's needs inevitably differ.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, override
 
 import numpy as np
 
@@ -99,10 +99,12 @@ class VideoElement(_StyledMixin, Padding):
         else:
             self.mark_needs_paint()
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         return outer.constrain(self._natural)
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Offset) -> None:
         super().paint_self(ctx, absolute)
         entry = self._entry

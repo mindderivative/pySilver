@@ -53,7 +53,7 @@ else, scoped to just that one subtree.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, override
 
 from ..layout import Constraints, LayoutNode, Offset, Size
 from ..spec import WidgetSpec
@@ -73,6 +73,7 @@ class PageHostElement(_StyledMixin, LayoutNode):
         #: always compares unequal and triggers the initial activation.
         self._active_name: str = ""
 
+    @override
     def configure(self) -> None:
         """Nothing style-derived to capture -- `value:`/`default:` are read
         fresh from `self._value`/`self.spec` on every layout pass instead,
@@ -80,6 +81,7 @@ class PageHostElement(_StyledMixin, LayoutNode):
 
     # ------------------------------------------------------------- activity
 
+    @override
     @property
     def children(self) -> tuple[Any, ...]:
         """Only the active page -- see the module docstring. `self._children`
@@ -126,6 +128,7 @@ class PageHostElement(_StyledMixin, LayoutNode):
 
     # -------------------------------------------------------------- layout
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         self._sync_active()
         outer = self.sized(constraints, self.style)
@@ -142,6 +145,7 @@ class PageHostElement(_StyledMixin, LayoutNode):
 
     # ------------------------------------------------------------- lifecycle
 
+    @override
     def dispose(self) -> None:
         """Disposes every page this host ever built, not only the active
         one -- `self.children` (the filtered public property) would miss

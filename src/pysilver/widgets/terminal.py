@@ -165,7 +165,7 @@ import sys
 import threading
 import time
 from collections.abc import Callable
-from typing import Any, Final
+from typing import Any, Final, override
 
 import numpy as np
 
@@ -502,10 +502,12 @@ class TerminalElement(_StyledMixin, Padding):
 
     # ------------------------------------------------------------- lifecycle
 
+    @override
     def set_ticker(self, ticker: Any) -> None:
         super().set_ticker(ticker)
         self._ensure_started()
 
+    @override
     def dispose(self) -> None:
         if self._session is not None:
             self._session.stop()
@@ -601,6 +603,7 @@ class TerminalElement(_StyledMixin, Padding):
         width = two.width - one.width
         return Size(width if width > 0 else one.width, one.height)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         """Sizing is exact every frame; reflowing an already-live grid is not.
 
@@ -695,6 +698,7 @@ class TerminalElement(_StyledMixin, Padding):
 
     # ----------------------------------------------------------------- paint
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Offset) -> None:
         self._maybe_apply_pending_grid()
         self._drain_pty()

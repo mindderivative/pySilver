@@ -20,7 +20,7 @@ correspondingly more.
 from __future__ import annotations
 
 import math
-from typing import Any, Final
+from typing import Any, Final, override
 
 from ..layout import INF, Constraints, EdgeInsets, Offset, Padding, Size
 from ..runtime.events import ChangeEvent, EventType
@@ -247,6 +247,7 @@ class CardElement(_StyledMixin, Padding):
     #: cards are level 0. The level therefore depends on the variant.
     ELEVATED_LEVEL: Final = 1
 
+    @override
     @property
     def resting_elevation(self) -> int:
         return self.ELEVATED_LEVEL if self.style.variant == "elevated" else 0
@@ -257,6 +258,7 @@ class CardElement(_StyledMixin, Padding):
         "outlined": "surface",
     }
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         radii = self.style.corner_radius
@@ -271,14 +273,17 @@ class CardElement(_StyledMixin, Padding):
         pad = style.padding
         return pad if pad != EdgeInsets() else EdgeInsets.all(CardElement.PADDING)
 
+    @override
     def configure(self) -> None:
         self._padding = self._insets(self.style)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         inner = super().perform_layout(outer.loosen() if not outer.is_tight else outer)
         return outer.constrain(inner)
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         from ..paint import NO_TOKEN
 
@@ -387,6 +392,7 @@ class AccordionElement(_StyledMixin, Padding):
             invalidates="layout",
         )
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = outer.max_width if outer.has_bounded_width else 320.0
@@ -407,6 +413,7 @@ class AccordionElement(_StyledMixin, Padding):
         revealed = body_h * self._progress()
         return outer.constrain(Size(width, header_h + revealed))
 
+    @override
     def child_paint_context(self, ctx: PaintContext, absolute: Any) -> PaintContext:
         """Clip to the accordion's own (animated) size -- see `ScrollView`,
         which this mirrors exactly except that nothing scrolls."""
@@ -426,6 +433,7 @@ class AccordionElement(_StyledMixin, Padding):
             clip_radii=ctx.clip_radii,
         )
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         header_h = self._header_height()
@@ -487,11 +495,13 @@ class DividerElement(_StyledMixin, Padding):
         Padding.__init__(self, None, EdgeInsets())
         self.init_element(spec)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = outer.max_width if outer.has_bounded_width else 0.0
         return outer.constrain(Size(width, self.style.thickness))
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         inset = style.inset if style.variant == "inset" else 0.0
@@ -554,10 +564,12 @@ class ShapeElement(_StyledMixin, Padding):
         Padding.__init__(self, None, EdgeInsets())
         self.init_element(spec)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         return outer.constrain(Size(self.DEFAULT_SIZE, self.DEFAULT_SIZE))
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         from ..paint import NO_TOKEN
 
@@ -627,6 +639,7 @@ class CheckboxElement(_StyledMixin, Padding):
     RADIUS: Final = 2.0
     CURSOR = "pointer"
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         return (self.RADIUS,) * 4
@@ -635,9 +648,11 @@ class CheckboxElement(_StyledMixin, Padding):
         Padding.__init__(self, None, EdgeInsets())
         self.init_element(spec)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         return self.sized(constraints, self.style).constrain(Size(self.BOX, self.BOX))
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         selected = self.checked or self.indeterminate
         outline = ctx.palette.index("on_surface_variant")
@@ -706,6 +721,7 @@ class RadioElement(_StyledMixin, Padding):
     INNER: Final = 10.0
     CURSOR = "pointer"
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         return (self.OUTER / 2,) * 4
@@ -714,9 +730,11 @@ class RadioElement(_StyledMixin, Padding):
         Padding.__init__(self, None, EdgeInsets())
         self.init_element(spec)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         return self.sized(constraints, self.style).constrain(Size(self.OUTER, self.OUTER))
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         selected = self.checked
         active = ctx.palette.index(self.style.background or "primary")
@@ -809,6 +827,7 @@ class SwitchElement(_StyledMixin, Padding):
     MOTION: Final = SELECTION_MOTION
     CURVE: Final = SELECTION_CURVE
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         return (self.TRACK_H / 2,) * 4
@@ -817,6 +836,7 @@ class SwitchElement(_StyledMixin, Padding):
         Padding.__init__(self, None, EdgeInsets())
         self.init_element(spec)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         return self.sized(constraints, self.style).constrain(Size(self.TRACK_W, self.TRACK_H))
 
@@ -856,6 +876,7 @@ class SwitchElement(_StyledMixin, Padding):
             if handler is not None:
                 handler(event)
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         on = self.checked
         track = ctx.palette.index(
@@ -910,6 +931,7 @@ class ChipElement(_StyledMixin, Padding):
     GAP: Final = 6.0
     PAD_X: Final = 12.0
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         return (self.RADIUS,) * 4
@@ -941,12 +963,14 @@ class ChipElement(_StyledMixin, Padding):
         )
         return value
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         style = self.style
         label = measure_text(self._text, style.font_size, engine=self.text_engine)
         width = self.PAD_X * 2 + label.width + (self.ICON + self.GAP) * self._check_progress()
         return self.sized(constraints, style).constrain(Size(width, self.HEIGHT))
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         selected = self._is_filter and self.checked
@@ -1034,6 +1058,7 @@ class IconButtonElement(_StyledMixin, Padding):
         "outlined": (None, "on_surface_variant"),
     }
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         return (self.size.height / 2,) * 4
@@ -1042,9 +1067,11 @@ class IconButtonElement(_StyledMixin, Padding):
         Padding.__init__(self, None, EdgeInsets())
         self.init_element(spec)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         return self.sized(constraints, self.style).constrain(Size(self.SIZE, self.SIZE))
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         variant = style.variant if style.variant in self.VARIANTS else "standard"
@@ -1129,6 +1156,7 @@ class FabElement(_StyledMixin, Padding):
     EXTENDED_PAD_X: Final = 16.0
     EXTENDED_GAP: Final = 8.0
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         return (self._geometry()[1],) * 4
@@ -1147,6 +1175,7 @@ class FabElement(_StyledMixin, Padding):
             return 0.0
         return measure_text(label, self.style.font_size, engine=self.text_engine).width
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         height, _, icon = self._geometry()
         if self.style.variant == "extended":
@@ -1159,6 +1188,7 @@ class FabElement(_StyledMixin, Padding):
             return self.sized(constraints, self.style).constrain(Size(width, height))
         return self.sized(constraints, self.style).constrain(Size(height, height))
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         _, radius, icon = self._geometry()
@@ -1321,6 +1351,7 @@ class SpinBoxElement(_StyledMixin, Padding):
         )
         return max(self.VALUE_MIN_WIDTH, label.width + 2 * self.VALUE_PAD_X)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = 2 * self.SIZE + self._value_width()
@@ -1371,6 +1402,7 @@ class SpinBoxElement(_StyledMixin, Padding):
             f"spin_{side}", target, duration=STATE_LAYER_MOTION, curve=STATE_LAYER_CURVE
         )
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         content = content_token(ctx, style, "on_surface_variant")
@@ -1508,6 +1540,7 @@ class PaginationElement(_StyledMixin, Padding):
         slots.append(("next", None))
         return slots
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         n = len(self._slots())
@@ -1572,6 +1605,7 @@ class PaginationElement(_StyledMixin, Padding):
 
     # --------------------------------------------------------------- paint
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         content = content_token(ctx, style, "on_surface_variant")
@@ -1666,6 +1700,7 @@ class BadgeElement(_StyledMixin, Padding):
     PAD_X: Final = 4.0
     LABEL_SIZE: Final = 11.0
 
+    @override
     @property
     def effective_radii(self) -> tuple[float, float, float, float]:
         return (self.size.height / 2,) * 4
@@ -1685,6 +1720,7 @@ class BadgeElement(_StyledMixin, Padding):
     def _is_dot(self) -> bool:
         return self.style.variant == "dot" or not self._displayed
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         if self._is_dot:
@@ -1693,6 +1729,7 @@ class BadgeElement(_StyledMixin, Padding):
         width = max(self.HEIGHT, label.width + self.PAD_X * 2)
         return outer.constrain(Size(width, self.HEIGHT))
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         container = ctx.palette.index(style.background or "error")

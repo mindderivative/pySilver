@@ -26,7 +26,7 @@ but it is no longer fixed for the widget's lifetime.
 
 from __future__ import annotations
 
-from typing import Any, Final
+from typing import Any, Final, override
 
 from ..layout import Constraints, EdgeInsets, LayoutNode, Offset, Padding, Size
 from ..runtime.events import ChangeEvent, EventType
@@ -85,6 +85,7 @@ class DockPanelElement(_StyledMixin, Padding):
         Padding.__init__(self, None, EdgeInsets())
         self.init_element(spec)
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         child = self.child
@@ -94,6 +95,7 @@ class DockPanelElement(_StyledMixin, Padding):
         child.offset = Offset(0.0, 0.0)
         return outer.constrain(size)
 
+    @override
     def child_paint_context(self, ctx: PaintContext, absolute: Any) -> PaintContext:
         if self.selected:
             return ctx
@@ -160,6 +162,7 @@ class DockGroupElement(_StyledMixin, LayoutNode):
             x += width
         return rects
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = outer.max_width if outer.has_bounded_width else 320.0
@@ -258,6 +261,7 @@ class DockGroupElement(_StyledMixin, LayoutNode):
             f"tab_hover_{name}", target, duration=STATE_LAYER_MOTION, curve=STATE_LAYER_CURVE
         )
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         style = self.style
         dpr = ctx.pixel_ratio
@@ -338,6 +342,7 @@ class DockGroupElement(_StyledMixin, LayoutNode):
                 radius=self.INDICATOR_H,
             )
 
+    @override
     def paint_foreground(self, ctx: PaintContext, absolute: Any) -> None:
         # Found live: painting the drop-zone highlight from `paint_self`
         # (as the rest of this class's own chrome does) put it BEHIND the
@@ -393,6 +398,7 @@ class DockSplitElement(_StyledMixin, LayoutNode):
         self.init_element(spec)
         self._divider_main = 0.0
 
+    @override
     def insert_child(self, index: int, child: LayoutNode) -> None:
         if len(self._children) >= 2:
             raise ValueError(
@@ -422,6 +428,7 @@ class DockSplitElement(_StyledMixin, LayoutNode):
         except ValueError:
             return 0.5
 
+    @override
     def perform_layout(self, constraints: Constraints) -> Size:
         outer = self.sized(constraints, self.style)
         width = outer.max_width if outer.has_bounded_width else 0.0
@@ -461,6 +468,7 @@ class DockSplitElement(_StyledMixin, LayoutNode):
         pad = 3.0
         return self._divider_main - pad <= local <= self._divider_main + self.DIVIDER + pad
 
+    @override
     def cursor_at(self, x: float, y: float) -> str | None:
         if self._on_divider(x, y):
             # `rendercanvas.CursorShape` has no "col-resize"/"row-resize" --
@@ -528,6 +536,7 @@ class DockSplitElement(_StyledMixin, LayoutNode):
 
     # --------------------------------------------------------------- paint
 
+    @override
     def paint_self(self, ctx: PaintContext, absolute: Any) -> None:
         dpr = ctx.pixel_ratio
         horizontal = self.horizontal
@@ -557,6 +566,7 @@ class DockSplitElement(_StyledMixin, LayoutNode):
                 clip_radii=ctx.clip_radii,
             )
 
+    @override
     def paint_foreground(self, ctx: PaintContext, absolute: Any) -> None:
         # Same reasoning as `DockGroupElement.paint_foreground`: this
         # split's own two children fill its full rect (bar the divider),
