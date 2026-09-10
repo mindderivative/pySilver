@@ -170,7 +170,7 @@ def test_a_named_node_survives_a_reorder() -> None:
     root = build_element(spec(children=[CHILD_A, CHILD_B]))
     a = root.find("a")
     a.state.data["keep"] = 1
-    result, stats = reconcile(root, spec(children=[CHILD_B, CHILD_A]))
+    result, stats = reconcile(root, spec(children=[CHILD_B, CHILD_A]), build_element)
     assert [c.name for c in result.children] == ["b", "a"]
     assert result.find("a") is a
     assert result.find("a").state.data["keep"] == 1
@@ -189,7 +189,7 @@ def test_an_unnamed_node_keeps_state_by_position_not_content() -> None:
     slot0 = root.children[0]
     slot0.state.data["keep"] = 1
 
-    result, stats = reconcile(root, spec(children=[ANON_B, ANON_A]))
+    result, stats = reconcile(root, spec(children=[ANON_B, ANON_A]), build_element)
 
     # Same element object in slot 0 ...
     assert result.children[0] is slot0
@@ -205,7 +205,7 @@ def test_an_unnamed_node_survives_when_position_is_unchanged() -> None:
     first = root.children[0]
     first.state.data["keep"] = 1
     changed = {"widget": "Container", "style": {"width": 99, "height": 10}}
-    result, _ = reconcile(root, spec(children=[changed]))
+    result, _ = reconcile(root, spec(children=[changed]), build_element)
     assert result.children[0] is first
     assert result.children[0].state.data["keep"] == 1
 
@@ -214,7 +214,7 @@ def test_naming_only_some_children_still_works() -> None:
     root = build_element(spec(children=[ANON_A, CHILD_B]))
     b = root.find("b")
     b.state.data["keep"] = 1
-    result, _ = reconcile(root, spec(children=[CHILD_B, ANON_A]))
+    result, _ = reconcile(root, spec(children=[CHILD_B, ANON_A]), build_element)
     assert result.find("b") is b
     assert result.find("b").state.data["keep"] == 1
 

@@ -176,7 +176,7 @@ def test_reload_does_not_reset_a_dragged_node() -> None:
     root = laid_out(graph(node("a", 0.0, 0.0)))
     root.find("a")._set_position(Offset(99.0, 5.0))
     new_spec = parse_view(graph(node("a", 0.0, 0.0))).root
-    result, _ = reconcile(root, new_spec)
+    result, _ = reconcile(root, new_spec, build_element)
     assert result.find("a").position == Offset(99.0, 5.0)
 
 

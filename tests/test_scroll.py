@@ -161,7 +161,7 @@ def test_offset_is_reclamped_when_the_content_shrinks() -> None:
     ).root
     from pysilver.tree.reconcile import reconcile
 
-    reconcile(sv, shorter)
+    reconcile(sv, shorter, build_element)
     sv.layout(Constraints.loose(Size(400, 400)))
     assert sv.scroll_offset == sv.max_scroll < deep
 
@@ -525,7 +525,7 @@ def test_scroll_position_survives_a_reload() -> None:
             ],
         }
     ).root
-    result, _ = reconcile(sv, same)
+    result, _ = reconcile(sv, same, build_element)
     assert result is sv
     assert result.scroll_offset == 200.0
 

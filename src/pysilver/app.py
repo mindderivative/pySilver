@@ -274,7 +274,7 @@ class App:
     def reload(self, view: str | Path | ViewSpec | dict[str, Any]) -> ReconcileStats:
         """Swap in a new view, preserving runtime state where ids still match."""
         new_view = self._load(view)
-        root, stats = reconcile(self.root, new_view.root)
+        root, stats = reconcile(self.root, new_view.root, build_element)
         self.root = root
         assert isinstance(stats, ReconcileStats)
         self.view = new_view

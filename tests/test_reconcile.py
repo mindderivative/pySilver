@@ -26,7 +26,7 @@ CHILD_B = {"name": "b", "widget": "Container", "style": {"width": 20, "height": 
 def test_identical_spec_skips_the_subtree() -> None:
     s = spec(children=[CHILD_A])
     root = build_element(s)
-    result, stats = reconcile(root, s)
+    result, stats = reconcile(root, s, build_element)
     assert result is root
     assert stats.skipped == 1
     assert stats.updated == 0
@@ -36,7 +36,7 @@ def test_style_change_updates_in_place() -> None:
     root = tree(children=[CHILD_A])
     child = root.find("a")
     new = spec(children=[{**CHILD_A, "style": {"width": 99, "height": 10}}])
-    result, stats = reconcile(root, new)
+    result, stats = reconcile(root, new, build_element)
     assert result is root
     assert result.find("a") is child, "child was rebuilt instead of updated"
     assert child.style.width.value == 99
@@ -50,7 +50,9 @@ def test_disabled_literal_change_updates_in_place() -> None:
     root = tree(children=[{**CHILD_A, "disabled": "true"}])
     child = root.find("a")
     assert child.disabled
-    result, stats = reconcile(root, spec(children=[{**CHILD_A, "disabled": "false"}]))
+    result, stats = reconcile(
+        root, spec(children=[{**CHILD_A, "disabled": "false"}]), build_element
+    )
     assert result.find("a") is child
     assert not child.disabled
     assert stats.updated >= 1
@@ -67,6 +69,7 @@ def test_state_survives_a_style_change() -> None:
     result, _ = reconcile(
         root,
         spec(children=[{**CHILD_A, "style": {"width": 50, "height": 10, "background": "primary"}}]),
+        build_element,
     )
 
     survivor = result.find("a")
@@ -79,14 +82,14 @@ def test_state_survives_a_style_change() -> None:
 def test_changed_widget_kind_forces_a_rebuild() -> None:
     root = tree(children=[CHILD_A])
     old = root.find("a")
-    result, stats = reconcile(root, spec(children=[{**CHILD_A, "widget": "Button"}]))
+    result, stats = reconcile(root, spec(children=[{**CHILD_A, "widget": "Button"}]), build_element)
     assert result.find("a") is not old
     assert stats.created >= 1
 
 
 def test_changed_id_forces_a_rebuild() -> None:
     root = tree(children=[CHILD_A])
-    result, stats = reconcile(root, spec(children=[{**CHILD_A, "name": "renamed"}]))
+    result, stats = reconcile(root, spec(children=[{**CHILD_A, "name": "renamed"}]), build_element)
     assert result.find("a") is None
     assert result.find("renamed") is not None
     assert stats.created >= 1
@@ -98,7 +101,7 @@ def test_changed_id_forces_a_rebuild() -> None:
 def test_added_child_is_created() -> None:
     root = tree(children=[CHILD_A])
     kept = root.find("a")
-    result, stats = reconcile(root, spec(children=[CHILD_A, CHILD_B]))
+    result, stats = reconcile(root, spec(children=[CHILD_A, CHILD_B]), build_element)
     assert len(result.children) == 2
     assert result.find("a") is kept
     assert stats.created == 1
@@ -106,7 +109,7 @@ def test_added_child_is_created() -> None:
 
 def test_removed_child_is_disposed() -> None:
     root = tree(children=[CHILD_A, CHILD_B])
-    result, stats = reconcile(root, spec(children=[CHILD_A]))
+    result, stats = reconcile(root, spec(children=[CHILD_A]), build_element)
     assert len(result.children) == 1
     assert result.find("b") is None
     assert stats.disposed == 1
@@ -117,7 +120,7 @@ def test_reordering_preserves_identity_and_state() -> None:
     root = tree(children=[CHILD_A, CHILD_B])
     a, b = root.find("a"), root.find("b")
     a.state.data["keep"] = 1
-    result, stats = reconcile(root, spec(children=[CHILD_B, CHILD_A]))
+    result, stats = reconcile(root, spec(children=[CHILD_B, CHILD_A]), build_element)
     assert [c.name for c in result.children] == ["b", "a"]
     assert result.find("a") is a
     assert result.find("b") is b
@@ -139,7 +142,7 @@ def test_nested_subtrees_reconcile() -> None:
         **nested,
         "children": [{"name": "inner", "widget": "Container", "style": {"width": 77, "height": 5}}],
     }
-    result, _ = reconcile(root, spec(children=[changed]))
+    result, _ = reconcile(root, spec(children=[changed]), build_element)
     assert result.find("inner") is inner
     assert result.find("inner").state.data["x"] == 1
     assert result.find("inner").style.width.value == 77
@@ -154,6 +157,7 @@ def test_reconciled_tree_lays_out_correctly() -> None:
             style={"padding": 8, "spacing": 4},
             children=[CHILD_A, {**CHILD_B, "style": {"width": 20, "height": 40}}],
         ),
+        build_element,
     )
     result.layout(Constraints.tight(Size(200, 200)))
     assert result.find("b").size == Size(20, 40)
@@ -172,6 +176,6 @@ def test_disposal_releases_subscriptions() -> None:
         element.bind(ctx)
     assert count.subscriber_count == 1
 
-    result, _ = reconcile(root, spec(children=[]))
+    result, _ = reconcile(root, spec(children=[]), build_element)
     assert result.find("t") is None
     assert count.subscriber_count == 0, "disposed element still subscribed"

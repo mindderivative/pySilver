@@ -8,13 +8,21 @@ looks. Matching by ``(id, widget)`` and updating in place preserves all of it.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Any
 
 from ..spec import WidgetSpec
-from ..widgets import build_element
 from .element import ElementMixin
 
-__all__ = ["ReconcileStats", "reconcile"]
+__all__ = ["ElementBuilder", "ReconcileStats", "reconcile"]
+
+#: Builds a fresh Element subtree from a Spec node. `reconcile` takes this as
+#: a parameter rather than importing `widgets.build_element` itself, so this
+#: module -- generic, widget-agnostic diffing machinery -- stays as free of
+#: the concrete widget catalogue as `layout/` already is (ARCHITECTURE.md 5.3,
+#: 5.4). A caller that already sits above both layers (`app.py`, tests) passes
+#: `widgets.build_element` in; nothing here needs to know that's what it is.
+ElementBuilder = Callable[[WidgetSpec], Any]
 
 
 class ReconcileStats:
@@ -51,20 +59,29 @@ def _compatible(element: Any, spec: WidgetSpec) -> bool:
     return bool(_identity(element.spec) == _identity(spec) and element.spec.widget == spec.widget)
 
 
-def reconcile(element: Any, spec: WidgetSpec, stats: ReconcileStats | None = None) -> Any:
+def reconcile(
+    element: Any,
+    spec: WidgetSpec,
+    build: ElementBuilder,
+    stats: ReconcileStats | None = None,
+) -> Any:
     """Return ``(element, stats)``, reusing *element* and all of its runtime
-    state wherever identity and widget kind still agree."""
+    state wherever identity and widget kind still agree.
+
+    *build* constructs a fresh Element subtree for a Spec node that has no
+    reusable counterpart -- pass ``widgets.build_element``.
+    """
     stats = stats if stats is not None else ReconcileStats()
-    return _reconcile(element, spec, stats), stats
+    return _reconcile(element, spec, build, stats), stats
 
 
-def _reconcile(element: Any, spec: WidgetSpec, stats: ReconcileStats) -> Any:
+def _reconcile(element: Any, spec: WidgetSpec, build: ElementBuilder, stats: ReconcileStats) -> Any:
     if element is None or not _compatible(element, spec):
         if element is not None:
             element.dispose()
             stats.disposed += 1
         stats.created += 1
-        return build_element(spec)
+        return build(spec)
 
     if element.spec == spec:
         # Structurally identical subtree: nothing below can differ either.
@@ -73,11 +90,13 @@ def _reconcile(element: Any, spec: WidgetSpec, stats: ReconcileStats) -> Any:
 
     element.update_spec(spec)
     stats.updated += 1
-    _reconcile_children(element, spec, stats)
+    _reconcile_children(element, spec, build, stats)
     return element
 
 
-def _reconcile_children(element: Any, spec: WidgetSpec, stats: ReconcileStats) -> None:
+def _reconcile_children(
+    element: Any, spec: WidgetSpec, build: ElementBuilder, stats: ReconcileStats
+) -> None:
     old_children = [c for c in element.children if isinstance(c, ElementMixin)]
     by_key: dict[tuple[str, str], Any] = {
         (_identity(c.spec), str(c.spec.widget)): c for c in old_children
@@ -89,10 +108,10 @@ def _reconcile_children(element: Any, spec: WidgetSpec, stats: ReconcileStats) -
         existing = by_key.pop(key, None)
         if existing is not None:
             stats.reused += 1
-            matched.append(_reconcile(existing, child_spec, stats))
+            matched.append(_reconcile(existing, child_spec, build, stats))
         else:
             stats.created += 1
-            matched.append(build_element(child_spec))
+            matched.append(build(child_spec))
 
     # Anything left unmatched is gone: release its subscriptions.
     for orphan in by_key.values():
