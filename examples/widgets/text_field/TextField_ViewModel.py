@@ -18,8 +18,10 @@ class TextFieldDemo(ViewModel):
         self.name = Signal("Ada Lovelace", name="name")
         self.bidi_text = Signal("Hello مرحبا שלום world", name="bidi_text")
 
-        self.view_source = (Path(__file__).parent / "TextField_View.yaml").read_text()
-        self.viewmodel_source = Path(__file__).read_text()
+        self.view_source = (Path(__file__).parent / "TextField_View.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.viewmodel_source = Path(__file__).read_text(encoding="utf-8")
 
     def change_name(self, event: Any) -> None:
         self.name.set(event.value)

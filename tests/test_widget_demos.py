@@ -75,8 +75,8 @@ def test_widget_demo_code_panels_match_disk(demo_dir: Path) -> None:
     python_panel = app.root.find("python_source")
     assert yaml_panel is not None, f"{demo_dir}: no 'yaml_source' CodeEditor found"
     assert python_panel is not None, f"{demo_dir}: no 'python_source' CodeEditor found"
-    assert yaml_panel._value == view_path.read_text()  # type: ignore[attr-defined]
-    assert python_panel._value == vm_path.read_text()  # type: ignore[attr-defined]
+    assert yaml_panel._value == view_path.read_text(encoding="utf-8")  # type: ignore[attr-defined]
+    assert python_panel._value == vm_path.read_text(encoding="utf-8")  # type: ignore[attr-defined]
 
 
 def test_at_least_one_demo_exists() -> None:
