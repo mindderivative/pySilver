@@ -151,19 +151,19 @@ class TimePickerElement(_StyledMixin, Padding):
     def on_click(self, event: Any) -> None:
         if self.effective_disabled:
             return
-        target = self._target_at(event.x, event.y)
-        if target == "hour_inc":
-            self._step_hour(1)
-        elif target == "hour_dec":
-            self._step_hour(-1)
-        elif target == "minute_inc":
-            self._step_minute(1)
-        elif target == "minute_dec":
-            self._step_minute(-1)
-        elif target == "am":
-            self._set_pm(False)
-        elif target == "pm":
-            self._set_pm(True)
+        match self._target_at(event.x, event.y):
+            case "hour_inc":
+                self._step_hour(1)
+            case "hour_dec":
+                self._step_hour(-1)
+            case "minute_inc":
+                self._step_minute(1)
+            case "minute_dec":
+                self._step_minute(-1)
+            case "am":
+                self._set_pm(False)
+            case "pm":
+                self._set_pm(True)
 
     def on_pointer_move(self, event: Any) -> None:
         target = self._target_at(event.x, event.y)

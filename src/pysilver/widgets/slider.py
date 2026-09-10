@@ -468,32 +468,34 @@ class SliderElement(_StyledMixin, Padding):
         image_entry = self._handle_image_entry
         if image_entry is not None:
             self._paint_handle_image(ctx, absolute, handle_x, image_entry)
-        elif style.handle_shape == "square":
-            self._paint_handle_polygon(
-                ctx, absolute, handle_x, sides=4.0, rotation=_SQUARE_ROTATION, token=active
-            )
-        elif style.handle_shape == "hexagon":
-            self._paint_handle_polygon(
-                ctx, absolute, handle_x, sides=6.0, rotation=0.0, token=active
-            )
-        elif style.handle_shape == "circle":
-            diameter = self.HANDLE_CIRCLE_DIAMETER
-            _box(
-                ctx,
-                handle_x + self.HANDLE_WIDTH / 2 - diameter / 2,
-                absolute.y + (self.size.height - diameter) / 2,
-                diameter,
-                diameter,
-                token=active,
-                radius=diameter / 2,
-            )
         else:
-            _box(
-                ctx,
-                handle_x,
-                absolute.y + (self.size.height - handle_height) / 2,
-                self.HANDLE_WIDTH,
-                handle_height,
-                token=active,
-                radius=self.HANDLE_RADIUS,
-            )
+            match style.handle_shape:
+                case "square":
+                    self._paint_handle_polygon(
+                        ctx, absolute, handle_x, sides=4.0, rotation=_SQUARE_ROTATION, token=active
+                    )
+                case "hexagon":
+                    self._paint_handle_polygon(
+                        ctx, absolute, handle_x, sides=6.0, rotation=0.0, token=active
+                    )
+                case "circle":
+                    diameter = self.HANDLE_CIRCLE_DIAMETER
+                    _box(
+                        ctx,
+                        handle_x + self.HANDLE_WIDTH / 2 - diameter / 2,
+                        absolute.y + (self.size.height - diameter) / 2,
+                        diameter,
+                        diameter,
+                        token=active,
+                        radius=diameter / 2,
+                    )
+                case _:
+                    _box(
+                        ctx,
+                        handle_x,
+                        absolute.y + (self.size.height - handle_height) / 2,
+                        self.HANDLE_WIDTH,
+                        handle_height,
+                        token=active,
+                        radius=self.HANDLE_RADIUS,
+                    )

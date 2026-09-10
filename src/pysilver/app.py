@@ -483,57 +483,58 @@ class App:
 
     def _on_canvas_event(self, event: dict[str, Any]) -> None:
         kind = event.get("event_type")
-        if kind in _POINTER_EVENTS:
-            self.dispatcher.post(
-                PointerEvent(
-                    _POINTER_EVENTS[kind],
-                    x=float(event.get("x", 0.0)),
-                    y=float(event.get("y", 0.0)),
-                    button=int(event.get("button", 0) or 0),
-                    modifiers=frozenset(event.get("modifiers", ())),
+        match kind:
+            case _ if kind in _POINTER_EVENTS:
+                self.dispatcher.post(
+                    PointerEvent(
+                        _POINTER_EVENTS[kind],
+                        x=float(event.get("x", 0.0)),
+                        y=float(event.get("y", 0.0)),
+                        button=int(event.get("button", 0) or 0),
+                        modifiers=frozenset(event.get("modifiers", ())),
+                    )
                 )
-            )
-        elif kind == "wheel":
-            self.dispatcher.post(
-                WheelEvent(
-                    EventType.WHEEL,
-                    x=float(event.get("x", 0.0)),
-                    y=float(event.get("y", 0.0)),
-                    dx=float(event.get("dx", 0.0)),
-                    dy=float(event.get("dy", 0.0)),
-                    modifiers=frozenset(event.get("modifiers", ())),
+            case "wheel":
+                self.dispatcher.post(
+                    WheelEvent(
+                        EventType.WHEEL,
+                        x=float(event.get("x", 0.0)),
+                        y=float(event.get("y", 0.0)),
+                        dx=float(event.get("dx", 0.0)),
+                        dy=float(event.get("dy", 0.0)),
+                        modifiers=frozenset(event.get("modifiers", ())),
+                    )
                 )
-            )
-        elif kind == "key_down":
-            key = str(event.get("key", ""))
-            modifiers = frozenset(event.get("modifiers", ()))
-            self.dispatcher.post(KeyEvent(EventType.KEY_DOWN, key=key, modifiers=modifiers))
-            # A single printable character (len(key) == 1) already repeats
-            # correctly on its own via `_on_char` -- GLFW's `_on_key` only
-            # lower-cases it when Shift is *not currently* held, so the same
-            # physical key can report "J" on press and "j" on release if
-            # Shift was let go in between. Tracking those here too, keyed on
-            # an exact string match to clear them, left `_repeat_key` stuck
-            # forever the moment that happened: a single tap of any shifted
-            # letter would repeat indefinitely rather than stop on release.
-            # Named action keys ("Backspace", "ArrowLeft", ...) never take
-            # that lower-casing branch, so they stay exact and safe to track.
-            if len(key) != 1:
-                self._repeat_key = key
-                self._repeat_modifiers = modifiers
-                self._repeat_elapsed = 0.0
-                self._repeating = False
-        elif kind == "key_up":
-            # Cleared unconditionally, not only on a string match against
-            # `self._repeat_key` -- the same modifier-dependent renaming
-            # above means a match can never be guaranteed, and the failure
-            # mode of clearing a key's repeat state a moment early is far
-            # safer than the one this replaces (clearing it never, at all).
-            self._repeat_key = None
-        elif kind == "char":
-            self.dispatcher.post(KeyEvent(EventType.TEXT, text=str(event.get("data", ""))))
-        else:
-            return
+            case "key_down":
+                key = str(event.get("key", ""))
+                modifiers = frozenset(event.get("modifiers", ()))
+                self.dispatcher.post(KeyEvent(EventType.KEY_DOWN, key=key, modifiers=modifiers))
+                # A single printable character (len(key) == 1) already repeats
+                # correctly on its own via `_on_char` -- GLFW's `_on_key` only
+                # lower-cases it when Shift is *not currently* held, so the same
+                # physical key can report "J" on press and "j" on release if
+                # Shift was let go in between. Tracking those here too, keyed on
+                # an exact string match to clear them, left `_repeat_key` stuck
+                # forever the moment that happened: a single tap of any shifted
+                # letter would repeat indefinitely rather than stop on release.
+                # Named action keys ("Backspace", "ArrowLeft", ...) never take
+                # that lower-casing branch, so they stay exact and safe to track.
+                if len(key) != 1:
+                    self._repeat_key = key
+                    self._repeat_modifiers = modifiers
+                    self._repeat_elapsed = 0.0
+                    self._repeating = False
+            case "key_up":
+                # Cleared unconditionally, not only on a string match against
+                # `self._repeat_key` -- the same modifier-dependent renaming
+                # above means a match can never be guaranteed, and the failure
+                # mode of clearing a key's repeat state a moment early is far
+                # safer than the one this replaces (clearing it never, at all).
+                self._repeat_key = None
+            case "char":
+                self.dispatcher.post(KeyEvent(EventType.TEXT, text=str(event.get("data", ""))))
+            case _:
+                return
         if self.engine is not None:
             self.engine.request_draw()
 
