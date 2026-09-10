@@ -185,7 +185,7 @@ class GlyphAtlas:
     __slots__ = (
         "_cache",
         "_device",
-        "_dirty",
+        "_dirty_rect",
         "_generation",
         "_packer",
         "_pixels",
@@ -201,11 +201,27 @@ class GlyphAtlas:
         self._cache: dict[AtlasKey, AtlasEntry] = {}
         self._generation = 0
         self._resets = 0
-        self._dirty = True
+        # (x0, y0, x1, y1) exclusive bounds of the region not yet pushed to
+        # the GPU, or None once `upload()` has caught up. Tracked instead of
+        # a plain dirty flag so `upload()` can write only the changed
+        # sub-rect -- a single glyph packed mid-frame used to force a whole
+        # 1 MiB `write_texture` call, the same as a full atlas reset would.
+        self._dirty_rect: tuple[int, int, int, int] | None = (0, 0, size, size)
         self._device = device
         self._texture: Any = None
         if device is not None:
             self._create_texture()
+
+    def _mark_dirty(self, x0: int, y0: int, x1: int, y1: int) -> None:
+        x0, y0 = max(0, x0), max(0, y0)
+        x1, y1 = min(self.size, x1), min(self.size, y1)
+        if x1 <= x0 or y1 <= y0:
+            return
+        if self._dirty_rect is None:
+            self._dirty_rect = (x0, y0, x1, y1)
+        else:
+            ox0, oy0, ox1, oy1 = self._dirty_rect
+            self._dirty_rect = (min(ox0, x0), min(oy0, y0), max(ox1, x1), max(oy1, y1))
 
     # ------------------------------------------------------------ CPU side
 
@@ -234,7 +250,7 @@ class GlyphAtlas:
         self._cache.clear()
         self._generation += 1
         self._resets += 1
-        self._dirty = True
+        self._dirty_rect = (0, 0, self.size, self.size)
 
     def add(self, key: AtlasKey, bitmap: GlyphBitmap) -> AtlasEntry:
         if bitmap.is_blank:
@@ -274,7 +290,9 @@ class GlyphAtlas:
             self._pixels[y - 1, x - 1] = bitmap.coverage[0, 0]
         entry = AtlasEntry(x, y, w, h, bitmap.left, bitmap.top, self._generation)
         self._cache[key] = entry
-        self._dirty = True
+        # Covers the glyph itself plus the one-pixel extrusion border written
+        # above on whichever of its four sides actually got one.
+        self._mark_dirty(x - 1, y - 1, x + w + 1, y + h + 1)
         return entry
 
     def get(
@@ -312,11 +330,11 @@ class GlyphAtlas:
             return
         self._device = device
         self._create_texture()
-        self._dirty = True
+        self._dirty_rect = (0, 0, self.size, self.size)
 
     @property
     def dirty(self) -> bool:
-        return self._dirty
+        return self._dirty_rect is not None
 
     def _create_texture(self) -> None:
         import wgpu
@@ -336,16 +354,25 @@ class GlyphAtlas:
         self._device = None
 
     def upload(self) -> bool:
-        """Push the CPU image to the GPU if it changed. Returns whether it did."""
-        if self._device is None or not self._dirty:
+        """Push only the changed sub-rect of the CPU image to the GPU.
+
+        Returns whether anything was pushed. A single glyph packed mid-frame
+        used to force a full `size x size` `write_texture` regardless of how
+        small its own footprint was; this uploads exactly the accumulated
+        dirty rect instead (the whole atlas, same as before, on a reset).
+        """
+        if self._device is None or self._dirty_rect is None:
             return False
+        x0, y0, x1, y1 = self._dirty_rect
+        width, height = x1 - x0, y1 - y0
+        region = np.ascontiguousarray(self._pixels[y0:y1, x0:x1])
         self._device.queue.write_texture(
-            {"texture": self._texture},
-            np.ascontiguousarray(self._pixels),
-            {"bytes_per_row": self.size, "rows_per_image": self.size},
-            (self.size, self.size, 1),
+            {"texture": self._texture, "origin": (x0, y0, 0)},
+            region,
+            {"bytes_per_row": width, "rows_per_image": height},
+            (width, height, 1),
         )
-        self._dirty = False
+        self._dirty_rect = None
         return True
 
 
@@ -408,7 +435,7 @@ class ImageAtlas:
     __slots__ = (
         "_cache",
         "_device",
-        "_dirty",
+        "_dirty_rect",
         "_generation",
         "_packer",
         "_pixels",
@@ -424,11 +451,25 @@ class ImageAtlas:
         self._cache: dict[ImageKey, ImageEntry] = {}
         self._generation = 0
         self._resets = 0
-        self._dirty = True
+        # See `GlyphAtlas._dirty_rect` -- same reasoning, most valuable here:
+        # `Video.push_frame` calls `update()` 30-60 times a second, and this
+        # atlas is 4 bytes/pixel against the glyph atlas's 1.
+        self._dirty_rect: tuple[int, int, int, int] | None = (0, 0, size, size)
         self._device = device
         self._texture: Any = None
         if device is not None:
             self._create_texture()
+
+    def _mark_dirty(self, x0: int, y0: int, x1: int, y1: int) -> None:
+        x0, y0 = max(0, x0), max(0, y0)
+        x1, y1 = min(self.size, x1), min(self.size, y1)
+        if x1 <= x0 or y1 <= y0:
+            return
+        if self._dirty_rect is None:
+            self._dirty_rect = (x0, y0, x1, y1)
+        else:
+            ox0, oy0, ox1, oy1 = self._dirty_rect
+            self._dirty_rect = (min(ox0, x0), min(oy0, y0), max(ox1, x1), max(oy1, y1))
 
     # ------------------------------------------------------------ CPU side
 
@@ -461,7 +502,7 @@ class ImageAtlas:
         self._cache.clear()
         self._generation += 1
         self._resets += 1
-        self._dirty = True
+        self._dirty_rect = (0, 0, self.size, self.size)
 
     def add(self, key: ImageKey, rgba: np.ndarray) -> ImageEntry:
         """Pack *rgba* -- (height, width, 4) uint8, straight alpha -- and
@@ -488,7 +529,7 @@ class ImageAtlas:
         self._pixels[y : y + h, x : x + w] = rgba
         entry = ImageEntry(x, y, w, h, self._generation)
         self._cache[key] = entry
-        self._dirty = True
+        self._mark_dirty(x, y, x + w, y + h)
         return entry
 
     def get_or_add(self, key: ImageKey, loader: Callable[[], np.ndarray]) -> ImageEntry:
@@ -530,7 +571,7 @@ class ImageAtlas:
         same_shape = entry is not None and (entry.width, entry.height) == (w, h)
         if entry is not None and entry.generation == self._generation and same_shape:
             self._pixels[entry.y : entry.y + h, entry.x : entry.x + w] = rgba
-            self._dirty = True
+            self._mark_dirty(entry.x, entry.y, entry.x + w, entry.y + h)
             return entry
         return self.add(key, rgba)
 
@@ -546,11 +587,11 @@ class ImageAtlas:
             return
         self._device = device
         self._create_texture()
-        self._dirty = True
+        self._dirty_rect = (0, 0, self.size, self.size)
 
     @property
     def dirty(self) -> bool:
-        return self._dirty
+        return self._dirty_rect is not None
 
     def _create_texture(self) -> None:
         import wgpu
@@ -583,14 +624,23 @@ class ImageAtlas:
         self._device = None
 
     def upload(self) -> bool:
-        """Push the CPU image to the GPU if it changed. Returns whether it did."""
-        if self._device is None or not self._dirty:
+        """Push only the changed sub-rect of the CPU image to the GPU.
+
+        Returns whether anything was pushed. `Video.push_frame` calls
+        `update()` 30-60 times a second; this uploads only that frame's own
+        footprint instead of the full 4 MiB texture every time (the whole
+        atlas, same as before, on a reset). See `GlyphAtlas.upload`.
+        """
+        if self._device is None or self._dirty_rect is None:
             return False
+        x0, y0, x1, y1 = self._dirty_rect
+        width, height = x1 - x0, y1 - y0
+        region = np.ascontiguousarray(self._pixels[y0:y1, x0:x1])
         self._device.queue.write_texture(
-            {"texture": self._texture},
-            np.ascontiguousarray(self._pixels),
-            {"bytes_per_row": self.size * 4, "rows_per_image": self.size},
-            (self.size, self.size, 1),
+            {"texture": self._texture, "origin": (x0, y0, 0)},
+            region,
+            {"bytes_per_row": width * 4, "rows_per_image": height},
+            (width, height, 1),
         )
-        self._dirty = False
+        self._dirty_rect = None
         return True
